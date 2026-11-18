@@ -84,9 +84,6 @@ jobs:
       - name: Generated outputs and representative goldens
         if: matrix.shard == 2
         run: npm run test:generated
-      - name: Verify community Hermes adapter
-        if: matrix.shard == 2
-        run: node --test integrations/hermes-agent/test/plugin-contract.test.mjs
       - name: Run a complete regression shard
         run: node scripts/run-tests.mjs --shard=${{ matrix.shard }}/2
 

@@ -20,8 +20,6 @@ test('repository language metadata separates generated artifacts from implementa
     'archify/assets/template.html',
     'archify/examples/web-app-rendered.html',
     'examples/web-app.html',
-    'docs/cases/mco-runtime.architecture.html',
-    'experiments/mco-showcase/mco-runtime.html',
     'archify/renderers/shared/generated-brand-marks.mjs',
     'archify/renderers/shared/generated-validators.mjs',
   ]) {

@@ -11,37 +11,6 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
-test('showcase intake requires reproducible proof, redaction, and explicit publication permission', () => {
-  const template = read('.github/ISSUE_TEMPLATE/showcase.yml');
-
-  for (const field of [
-    'id: diagram_type',
-    'id: archify_version',
-    'id: agent',
-    'id: model',
-    'id: prompt',
-    'id: source_json',
-    'id: artifact',
-    'id: validation_receipt',
-    'id: visual_review',
-    'id: sensitive_data',
-    'id: sharing_rights',
-    'id: public_permission',
-  ]) {
-    assert.match(template, new RegExp(field), field);
-  }
-  assert.match(template, /access tokens/i);
-  assert.match(template, /personal or customer data/i);
-  assert.match(template, /repository, documentation, gallery, and project website/i);
-  assert.match(template, /required:\s*true/g);
-
-  const submissionUrl = 'https://github.com/tt-a1i/archify/issues/new?template=showcase.yml';
-  // Simform fork: README.md / README_EN.md are the fork's own README (DECISIONS.md D-14); upstream proof is asserted on the upstream translations.
-  for (const readme of ['README_ZH.md', 'README_JA.md']) {
-    assert.match(read(readme), new RegExp(submissionUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), `${readme}: direct showcase link`);
-  }
-});
-
 test('bug intake captures a minimal deterministic reproduction before visual diagnosis', () => {
   const template = read('.github/ISSUE_TEMPLATE/bug-report.yml');
 
@@ -81,7 +50,6 @@ test('contributor and pull-request guides keep proof changes reproducible and st
   const pullRequest = read('.github/PULL_REQUEST_TEMPLATE.md');
 
   for (const required of [
-    '.github/ISSUE_TEMPLATE/showcase.yml',
     '.github/ISSUE_TEMPLATE/bug-report.yml',
     'npm test',
     'Do not include secrets',

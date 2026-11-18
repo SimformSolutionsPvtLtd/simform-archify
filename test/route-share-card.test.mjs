@@ -148,16 +148,7 @@ test('skill and READMEs describe the optional Export variant and show one real c
   assert.match(viewer, /download-only/i);
   // Simform fork: README.md / README_EN.md are the fork's own README (DECISIONS.md D-14); upstream proof is asserted on the upstream translations.
 
-  for (const readme of ['README_ZH.md', 'README_JA.md']) {
-    const text = fs.readFileSync(path.join(repoRoot, readme), 'utf8');
-    assert.match(text, /Export → Route Share Card/, readme);
-    assert.match(text, /docs\/assets\/archify-route-share-card\.png/, readme);
-  }
 
-  const png = fs.readFileSync(path.join(repoRoot, 'docs/assets/archify-route-share-card.png'));
-  assert.equal(png.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
-  assert.equal(png.readUInt32BE(16), 1200);
-  assert.equal(png.readUInt32BE(20), 630);
 
 });
 

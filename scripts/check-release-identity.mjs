@@ -232,26 +232,20 @@ if (hasSupportedVersion) {
 
   const english = read('README.md');
   const englishMirror = read('README_EN.md');
-  const chinese = read('README_ZH.md');
-  const japanese = read('README_JA.md');
   checkReadme('README.md', english, version, 'en', isDevelopment);
   checkReadme('README_EN.md', englishMirror, version, 'en', isDevelopment);
-  checkReadme('README_ZH.md', chinese, version, 'zh', isDevelopment);
-  checkReadme('README_JA.md', japanese, version, 'ja', isDevelopment);
-  for (const [path, content] of [['README.md', english], ['README_EN.md', englishMirror], ['README_ZH.md', chinese], ['README_JA.md', japanese]]) {
+  for (const [path, content] of [['README.md', english], ['README_EN.md', englishMirror]]) {
     checkNoRavenSwitcher(path, content);
   }
   if (english !== englishMirror) fail('README_EN.md must remain byte-identical to README.md.');
 
   if (newestStableLabel && isDevelopment) {
     const stableMinor = newestStableLabel.split('.').slice(0, 2).join('\\.');
-    if (new RegExp(`Archify ${stableMinor} includes\\b`).test(english)
-      || new RegExp(`Archify ${stableMinor} 已覆盖`).test(chinese)) {
+    if (new RegExp(`Archify ${stableMinor} includes\\b`).test(english)) {
       fail(`README capability summary must describe v${version} as development, not published ${newestStableLabel}.`);
     }
   }
 
-  checkRoadmap('ROADMAP.md', read('ROADMAP.md'), version, isDevelopment);
 
   const changelogMarker = `Development identity: \`v${version}\``;
   if (hasRealUnreleasedChanges && !unreleased.includes(changelogMarker)) {

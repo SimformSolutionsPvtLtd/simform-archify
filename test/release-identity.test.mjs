@@ -49,18 +49,6 @@ function writeValidDevelopmentFixture(root, overrides = {}) {
     `Current development version: \`v${version}\``,
     '',
   ].join('\n');
-  const chinese = [
-    '![开发版本](https://img.shields.io/badge/version-2.13.0--dev.0-blue)',
-    '',
-    `当前开发版本：\`v${version}\``,
-    '',
-  ].join('\n');
-  const japanese = [
-    '![開発版](https://img.shields.io/badge/version-2.13.0--dev.0-blue)',
-    '',
-    `現在の開発版: \`v${version}\``,
-    '',
-  ].join('\n');
   const files = {
     'archify/package.json': JSON.stringify({ version }),
     'archify/package-lock.json': JSON.stringify({ version, packages: { '': { version } } }),
@@ -90,9 +78,6 @@ function writeValidDevelopmentFixture(root, overrides = {}) {
     ].join('\n'),
     'README.md': english,
     'README_EN.md': english,
-    'README_ZH.md': chinese,
-    'README_JA.md': japanese,
-    'ROADMAP.md': `The current development line is \`v${version}\`; it contains the work under Changelog Unreleased and is not a stable release.`,
   };
   for (const [relativePath, content] of Object.entries({ ...files, ...overrides })) {
     writeFile(root, relativePath, content);
@@ -105,18 +90,6 @@ function writeValidStableFixture(root, overrides = {}) {
     '![Stable Version](https://img.shields.io/badge/version-2.13.0-blue)',
     '',
     `Current stable version: \`v${version}\``,
-    '',
-  ].join('\n');
-  const chinese = [
-    '![稳定版本](https://img.shields.io/badge/version-2.13.0-blue)',
-    '',
-    `当前稳定版本：\`v${version}\``,
-    '',
-  ].join('\n');
-  const japanese = [
-    '![安定版](https://img.shields.io/badge/version-2.13.0-blue)',
-    '',
-    `現在の安定版: \`v${version}\``,
     '',
   ].join('\n');
   const files = {
@@ -144,9 +117,6 @@ function writeValidStableFixture(root, overrides = {}) {
     ].join('\n'),
     'README.md': english,
     'README_EN.md': english,
-    'README_ZH.md': chinese,
-    'README_JA.md': japanese,
-    'ROADMAP.md': `The current stable version is \`v${version}\`.`,
   };
   for (const [relativePath, content] of Object.entries({ ...files, ...overrides })) {
     writeFile(root, relativePath, content);
@@ -347,35 +317,12 @@ test('package, lockfile, Skill metadata, escaped Shields badge, and public docs 
     ].join('\n');
     writeFile(fixture, 'README.md', staleEnglish);
     writeFile(fixture, 'README_EN.md', staleEnglish);
-    writeFile(fixture, 'README_ZH.md', '![Version](https://img.shields.io/badge/version-2.13.0-blue)\n\nArchify 2.12 包含未发布能力。\n');
-    writeFile(fixture, 'README_JA.md', '![Version](https://img.shields.io/badge/version-2.13.0-blue)\n\nArchify 2.12 は未リリース機能を含みます。\n');
 
     const result = runCheck(fixture);
     assert.notEqual(result.status, 0);
     assert.match(result.stderr, /package-lock\.json must match 2\.13\.0-dev\.0/);
     assert.match(result.stderr, /SKILL\.md metadata version 2\.12 must map to package 2\.13\.0-dev\.0/);
     assert.match(result.stderr, /README\.md must advertise development identity v2\.13\.0-dev\.0/);
-    assert.match(result.stderr, /README_JA\.md must advertise development identity v2\.13\.0-dev\.0/);
-  } finally {
-    fs.rmSync(fixture, { recursive: true, force: true });
-  }
-});
-
-test('the Japanese README must carry its own development marker, not the English one', () => {
-  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'archify-release-identity-'));
-  try {
-    writeValidDevelopmentFixture(fixture, {
-      'README_JA.md': [
-        '![開発版](https://img.shields.io/badge/version-2.13.0--dev.0-blue)',
-        '',
-        'Current development version: `v2.13.0-dev.0`',
-        '',
-      ].join('\n'),
-    });
-
-    const result = runCheck(fixture);
-    assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /README_JA\.md must advertise development identity v2\.13\.0-dev\.0/);
   } finally {
     fs.rmSync(fixture, { recursive: true, force: true });
   }
@@ -391,21 +338,6 @@ test('renderer template generator carries the complete package prerelease identi
     const result = runCheck(fixture);
     assert.notEqual(result.status, 0);
     assert.match(result.stderr, /archify\/assets\/template\.html generator must be archify 2\.13\.0-dev\.0/);
-  } finally {
-    fs.rmSync(fixture, { recursive: true, force: true });
-  }
-});
-
-test('roadmap current identity follows the package release state', () => {
-  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'archify-release-identity-'));
-  try {
-    writeValidDevelopmentFixture(fixture, {
-      'ROADMAP.md': 'The current development line is `v2.12.0`; it is not a stable release.',
-    });
-
-    const result = runCheck(fixture);
-    assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /ROADMAP\.md must declare the current development line as v2\.13\.0-dev\.0/);
   } finally {
     fs.rmSync(fixture, { recursive: true, force: true });
   }

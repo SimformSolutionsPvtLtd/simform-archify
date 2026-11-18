@@ -9,23 +9,16 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const skillRoot = path.resolve(__dirname, '..', 'archify');
 const repoRoot = path.resolve(skillRoot, '..');
-const cursorCommand = 'npx -y skills@latest add https://archify.si --skill archify --agent cursor --global --copy --yes';
 
 test('Cursor onboarding stays explicit, bilingual, and backed by the same Skill', () => {
   const english = fs.readFileSync(path.join(repoRoot, 'README.md'), 'utf8');
   const englishMirror = fs.readFileSync(path.join(repoRoot, 'README_EN.md'), 'utf8');
-  const chinese = fs.readFileSync(path.join(repoRoot, 'README_ZH.md'), 'utf8');
-  const japanese = fs.readFileSync(path.join(repoRoot, 'README_JA.md'), 'utf8');
 
   assert.equal(english, englishMirror, 'English README mirrors must stay synchronized');
   for (const agent of ['Cursor', 'Claude Code', 'Codex CLI', 'OpenCode']) {
     assert.ok(english.includes(agent), `English README must name ${agent}`);
-    assert.ok(chinese.includes(agent), `Chinese README must name ${agent}`);
-    assert.ok(japanese.includes(agent), `Japanese README must name ${agent}`);
   }
-  // Simform fork: the English README installs from the Simform repository (DECISIONS.md D-14).
-  for (const surface of [chinese, japanese]) assert.ok(surface.includes(cursorCommand));
-  for (const surface of [english, chinese, japanese]) {
+  for (const surface of [english]) {
     assert.doesNotMatch(surface, /skills use[^\n<]*--agent cursor/);
     assert.doesNotMatch(surface, /~\/\.cursor\/skills\/archify/);
     assert.doesNotMatch(surface, /all Cursor models|every Cursor model/i);

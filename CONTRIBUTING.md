@@ -5,8 +5,7 @@ Archify is Agent-first: people describe systems, and the Skill, typed JSON, rend
 ## Choose the right path
 
 - Renderer, validator, package, or Viewer defect: use the [bug report form](.github/ISSUE_TEMPLATE/bug-report.yml).
-- Standalone community package: follow the [submission guide](community/README.md#submitting-a-package) and submit one metadata file to `dev`.
-- Reproducible real-world diagram: use the [showcase form](.github/ISSUE_TEMPLATE/showcase.yml).
+- Reproducible real-world diagram: open an issue with the prompt, agent, model, redacted JSON and validation receipt.
 - Changes to generation, layout/routing, validation, interaction, performance, dependencies, tests, or other behavior require a related issue and explicit maintainer agreement on the problem, value, and intended scope before substantial implementation or a formal PR. Use the bug form for defects and the [improvement proposal](.github/ISSUE_TEMPLATE/improvement.yml) for changes. Link an existing issue or recorded maintainer decision when available; a second approval thread is unnecessary.
 - Purely mechanical documentation corrections, such as typos or repairing a broken link to its intended destination, may go directly to a PR. Describe why the change is mechanical. Authoring instructions, new policy, behavioral documentation, and test changes are not exempt just because they are small or text-only.
 - Security vulnerabilities: follow [SECURITY.md](SECURITY.md).
@@ -105,10 +104,6 @@ test merely because it differs from the old implementation. Delete redundant
 source assertions when a behavior test owns that protection. Keep explicit
 geometry, compatibility, accessibility, failure cleanup, and protection against
 lost or corrupted output as observable contracts.
-
-### Real generation comparisons
-
-For PRs that change diagram generation, select and link before/after evidence using the [real repository benchmark](benchmarks/real-repo-generation/README.md). Its initial rollout is an agreed three-PR pilot; record the selected scope or a justified exemption before running. Contributors supply the comparison and session records; maintainers review outcomes and sample evidence. Synthetic error injection alone does not establish real Agent benefit. Reuse unaffected evidence at its recorded revision.
 
 ### CI by affected responsibility
 

@@ -30,6 +30,7 @@ and docs refer to them as `D-nn`.
 | D-21 | Viewer polish: sentence-case labels, no looping chrome, quiet legend counts | Done, review welcome |
 | D-22 | More built-in brand marks (AI and data stack); built-in marks use the 48px gutter in architecture diagrams | Done |
 | D-23 | Upstream's website, proof gallery and Pages/Cloudflare deploys are removed | Done |
+| D-24 | Upstream-only docs, evidence, benchmarks, community and integrations are removed | Done |
 
 ---
 
@@ -424,3 +425,26 @@ untouched. The release workflow was not checked for site steps. This removal was
 suite until it passed, not by tracing every reference, so stray mentions in prose may remain.
 **How to reverse:** `git revert` the commit that carries this entry (or restore the paths from the
 previous commit); nothing else depended on them.
+
+## D-24 Upstream-only docs, evidence, benchmarks, community and integrations are removed
+
+**Decided:** deleted the narrative and marketing material (`docs/article-*` and images, `docs/assets`,
+`experiments/`, `journal/`, `docs/research`, `docs/reviews`, the acceptance and design notes in `docs/`,
+`ROADMAP.md`, and `README_ZH.md`, `README_JA.md`, `README_KO.md`); the evidence and case studies
+(`docs/cases`, `docs/evidence`, `docs/reading-evidence`, `docs/issue-52-visual-evidence`, `docs/specs`
+except `docs/specs/explainer/examples`, `benchmarks/`, `community/`); and the other-agent integrations
+and automation (`integrations/`, `tools/`, the contributor-cards, contributors, star-history and DSH
+workflows, and the scripts and tests that served them). The upstream showcase issue template went too.
+Tests that only covered these were deleted; shared tests and `scripts/check-release-identity.mjs` lost
+their translated-README, roadmap and integration assertions.
+**Why:** Simform uses none of it, and each upstream README, benchmark and case study is something
+a reviewer would otherwise have to keep current.
+**Kept on purpose:** `docs/simform/`, the authoring cookbooks, `docs/releases`, `docs/skill-updates`,
+`CHANGELOG.md`, `PRODUCT.md`, `DESIGN.md`, the root `examples/` (goldens used by tests) and
+`docs/specs/explainer/examples` (fixtures for the explainer layout test).
+**Caveats:** the DeepSeek and Hermes adapters are gone, so the skill is no longer shipped for those
+agents from this repository; `test/path-boundary-contract.test.mjs` may still list `integrations/` paths;
+`scripts/ci-scope.mjs` still has classification rules for removed paths. `CHANGELOG.md` and a few
+prose mentions still name the removed material. Done by running the suite until it passed, so stray
+references may remain.
+**How to reverse:** `git revert` the commit that carries this entry.

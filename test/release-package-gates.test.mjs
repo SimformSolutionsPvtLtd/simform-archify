@@ -206,17 +206,6 @@ test('CI binds a public notifier manifest to the Release asset, tagged archive, 
   assert.match(job, /missing the deterministic archive builder/);
 });
 
-test('release docs disclose that mutable Release assets are verified only at deployment time', () => {
-  const design = fs.readFileSync(
-    path.join(repoRoot, 'docs', 'skill-embedded-optional-update-notifier-design.md'),
-    'utf8',
-  );
-  assert.match(design, /部署时点/);
-  assert.match(design, /部署后替换[^。]*不会自动触发复验/);
-  assert.match(design, /immutable release/i);
-  assert.doesNotMatch(design, /即使 Release 资产后来可被替换，也不能脱离/);
-});
-
 test('CI keeps the browser, media, package and Windows gates', () => {
   const workflow = fs.readFileSync(path.join(repoRoot, '.github', 'workflows', 'ci.yml'), 'utf8');
   const jobs = parse(workflow).jobs;

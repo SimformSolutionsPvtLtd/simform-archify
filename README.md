@@ -190,4 +190,3 @@ Simform Archify is distributed under the Apache License 2.0 ([LICENSE](LICENSE),
 
 Third-party material: Inter (SIL Open Font License 1.1, `archify/assets/Inter-OFL.txt`), Simple Icons marks (see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)), and Microsoft icons under Microsoft's terms (architecture diagrams, training material and documentation; not to be altered). Microsoft, Azure, Entra, Fabric, Dynamics 365 and Microsoft 365 are trademarks of Microsoft Corporation; their use here does not imply endorsement.
 
-The translated READMEs (`README_ZH.md`, `README_JA.md`, `README_KO.md`) are upstream's and describe upstream Archify.
