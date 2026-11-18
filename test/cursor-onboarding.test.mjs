@@ -25,7 +25,8 @@ test('Cursor onboarding stays explicit, bilingual, and backed by the same Skill'
     assert.ok(chinese.includes(agent), `Chinese README must name ${agent}`);
     assert.ok(japanese.includes(agent), `Japanese README must name ${agent}`);
   }
-  for (const surface of [english, chinese, japanese]) assert.ok(surface.includes(cursorCommand));
+  // Simform fork: the English README installs from the Simform repository (DECISIONS.md D-14).
+  for (const surface of [chinese, japanese]) assert.ok(surface.includes(cursorCommand));
   // The legacy static landing page keeps its original GitHub install source.
   assert.ok(landing.includes('npx -y skills add tt-a1i/archify --skill archify --agent cursor --global --copy --yes'));
   for (const surface of [english, chinese, japanese, start, landing]) {

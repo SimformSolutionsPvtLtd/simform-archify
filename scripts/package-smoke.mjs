@@ -154,8 +154,8 @@ async function verifyPackage() {
   const packageNotices = fs.readFileSync(packageNoticesPath, 'utf8');
   const repositoryNotices = fs.readFileSync(path.join(noticeComparisonRoot, 'THIRD_PARTY_NOTICES.md'), 'utf8');
   const embeddedFonts = /data:font\/woff2/.test(fs.readFileSync(path.join(skillRoot, 'assets/template.html'), 'utf8'));
-  if (embeddedFonts && !fs.existsSync(path.join(skillRoot, 'assets/JetBrainsMono-OFL.txt'))) {
-    throw new Error('embedded viewer font requires assets/JetBrainsMono-OFL.txt');
+  if (embeddedFonts && !fs.existsSync(path.join(skillRoot, 'assets/Inter-OFL.txt'))) {
+    throw new Error('embedded viewer font requires assets/Inter-OFL.txt');
   }
   assertThirdPartyNotices(repositoryNotices, 'repository THIRD_PARTY_NOTICES.md', { embeddedFonts });
   assertThirdPartyNotices(packageNotices, 'packaged THIRD_PARTY_NOTICES.md', { embeddedFonts });

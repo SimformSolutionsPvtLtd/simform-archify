@@ -49,7 +49,9 @@ async function seed(testFixture) {
 }
 
 function env(testFixture) {
+  // Simform fork: the CLI's upstream update check is off unless opted in.
   return { ...process.env,
+    SIMFORM_ARCHIFY_UPDATE_CHECK: '1',
     ARCHIFY_UPDATE_RELEASE_PATH: testFixture.releasePath,
     ARCHIFY_UPDATE_CACHE_DIRECTORY: testFixture.cacheDirectory,
   };

@@ -4,6 +4,7 @@ import http from 'node:http';
 import https from 'node:https';
 import net from 'node:net';
 import { BRAND_MARKS } from './generated-brand-marks.mjs';
+import { findPackIcon, listPackIcons, loadPackIcon, packSourceUrl, suggestPackIcons } from './icon-packs.mjs';
 import { throwDiagnosticError } from './diagnostics.mjs';
 import { esc, textUnits } from './utils.mjs';
 
@@ -81,11 +82,13 @@ export function findBrandMark(value) {
 
 export function listBrandMarks(query = '') {
   const needle = String(query).trim().toLocaleLowerCase('en-US');
-  return BRAND_MARKS.filter((mark) => {
+  const brands = BRAND_MARKS.filter((mark) => {
     if (!needle) return true;
     return [mark.id, mark.title, mark.category, ...mark.aliases, ...mark.domains]
       .some((value) => String(value).toLocaleLowerCase('en-US').includes(needle));
   }).map(({ path, ...mark }) => mark);
+  // Simform fork: Microsoft icon packs (Azure, M365, Entra, Fabric, Dynamics 365).
+  return [...brands, ...listPackIcons(query)];
 }
 
 function ipv4Private(address) {
@@ -574,12 +577,13 @@ function remoteBrand(value, cache, deadline) {
 
 function suggestions(value) {
   const needle = lookupForms(value)[0] || '';
-  return BRAND_MARKS.map((mark) => ({
+  const packSuggestions = suggestPackIcons(value, 3);
+  return [...packSuggestions, ...BRAND_MARKS.map((mark) => ({
     id: mark.id,
     score: lookupForms(mark.id).some((form) => form.includes(needle) || needle.includes(form)) ? 0 : 1,
   })).sort((left, right) => left.score - right.score || left.id.localeCompare(right.id))
     .slice(0, 5)
-    .map((entry) => entry.id);
+    .map((entry) => entry.id)].slice(0, 6);
 }
 
 async function mapConcurrent(values, limit, visit) {
@@ -624,6 +628,29 @@ export async function prepareDiagramBrandMarks(diagramType, diagram) {
       RESOLVED_BY_NODE.set(node, resolved);
       return;
     }
+    const packIcon = findPackIcon(node.brand);
+    if (packIcon) {
+      const scope = `ic${createHash('sha256').update(`${diagramType}\0${index}\0${node.id}\0${packIcon.id}`).digest('hex').slice(0, 8)}`;
+      try {
+        const loaded = loadPackIcon(packIcon, scope);
+        const resolved = {
+          id: packIcon.id,
+          title: packIcon.title,
+          kind: 'pack',
+          placement: placementFor(diagramType),
+          pack: packIcon.pack,
+          status: 'pack',
+          sourceUrl: packSourceUrl(packIcon),
+          viewBox: loaded.viewBox,
+          markup: loaded.markup,
+        };
+        node[RESOLVED_MARK] = resolved;
+        RESOLVED_BY_NODE.set(node, resolved);
+      } catch (error) {
+        unknown.push(`/${collection}/${index}/brand ${JSON.stringify(node.brand)} icon pack file is unusable: ${error.message}`);
+      }
+      return;
+    }
     const url = asUrl(node.brand);
     if (url) {
       unknown.push(`/${collection}/${index}/brand ${JSON.stringify(node.brand)} is an unpinned URL; capture it first with \`archify brands capture ${url.href} --json\``);
@@ -661,13 +688,50 @@ export function brandMetadataFor(node) {
   } : {};
 }
 
+// Pack icons are full-colour product art and are drawn larger than the 16px
+// single-colour brand badges. Architecture diagrams put the icon in a 48px left
+// gutter with the label beside it (DECISIONS.md D-09). The other diagram types
+// still use a 24px corner tile. SIMFORM_ICON_VARIANT="<corner|left|top>:<px>"
+// overrides the architecture placement, e.g. corner:24 restores the old look.
+const BRAND_MARK_SIZE = 16;
+const CORNER_PLACEMENT = { position: 'corner', size: 24 };
+
+function placementFor(diagramType) {
+  if (diagramType !== 'architecture') return CORNER_PLACEMENT;
+  const match = /^(corner|left|top):(\d{2})$/.exec(process.env.SIMFORM_ICON_VARIANT || '');
+  if (!match) return { position: 'left', size: 48 };
+  return { position: match[1], size: Math.min(64, Math.max(16, Number(match[2]))) };
+}
+
+function packPlacement(mark) {
+  return mark?.placement || CORNER_PLACEMENT;
+}
+
+function markSize(mark) {
+  return mark?.kind === 'pack' ? packPlacement(mark).size : BRAND_MARK_SIZE;
+}
+
+// Corner: the label is centred, so both sides keep the room the mark needs.
+// Left: the mark sits in a gutter and the label is left-aligned beside it.
+// Top: the mark is centred above the label, which keeps the full node width.
+function railReserve(mark) {
+  if (mark?.kind === 'pack') {
+    const { position, size } = packPlacement(mark);
+    if (position === 'left') return size + 36;
+    if (position === 'top') return 24;
+  }
+  return 2 * (markSize(mark) + 8);
+}
+
 export function brandLabelFitWidth(node, width) {
-  return brandMarkFor(node) ? Math.max(1, width - 48) : width;
+  const mark = brandMarkFor(node);
+  return mark ? Math.max(1, width - railReserve(mark)) : width;
 }
 
 export function brandTopRailProblem(node, width, minimumFontSize, subject = 'Node') {
-  if (!brandMarkFor(node)) return null;
-  const available = width - 48;
+  const mark = brandMarkFor(node);
+  if (!mark) return null;
+  const available = width - railReserve(mark);
   const required = textUnits(node.label) * minimumFontSize * 0.6;
   if (available >= required) return null;
   return `${subject} "${node.id}" brand top rail leaves ${Math.max(0, available)}px for its label, but `
@@ -679,6 +743,7 @@ function markAttrs(mark) {
     `data-brand-mark="${esc(mark.id)}"`,
     `data-brand-title="${esc(mark.title)}"`,
     `data-brand-status="${esc(mark.status)}"`,
+    mark.pack ? `data-brand-pack="${esc(mark.pack)}"` : '',
     mark.sourceUrl ? `data-brand-source="${esc(mark.sourceUrl)}"` : '',
     mark.sha256 ? `data-brand-sha256="${esc(mark.sha256)}"` : '',
   ].filter(Boolean).join(' ');
@@ -687,9 +752,25 @@ function markAttrs(mark) {
 export function renderBrandMark(node, { x, y, size = 16 } = {}) {
   const mark = brandMarkFor(node);
   if (!mark) return '';
-  const inset = 3;
+  let inset = 3;
   let content;
-  if (mark.kind === 'preset') {
+  if (mark.kind === 'pack') {
+    // Callers position a 16px badge; keep its right edge and grow leftwards.
+    const packSize = packPlacement(mark).size;
+    x -= packSize - size;
+    size = packSize;
+    inset = Math.max(2, Math.round(size / 12));
+    const inner = size - inset * 2;
+    // Fit like preserveAspectRatio="xMidYMid meet": uniform scale, centred, never
+    // cropped or distorted (Microsoft's terms forbid altering the artwork). A
+    // transform on a <g> keeps the artifact to its single diagram <svg>.
+    const [minX, minY, width, height] = mark.viewBox;
+    const scale = inner / Math.max(width, height);
+    const tx = inset + (inner - width * scale) / 2 - minX * scale;
+    const ty = inset + (inner - height * scale) / 2 - minY * scale;
+    const round = (value) => Number(value.toFixed(4));
+    content = `<g class="brand-mark-pack-art" transform="translate(${round(tx)} ${round(ty)}) scale(${round(scale)})">${mark.markup}</g>`;
+  } else if (mark.kind === 'preset') {
     const scale = (size - inset * 2) / mark.viewBox;
     content = `<path d="${esc(mark.path)}" transform="translate(${inset} ${inset}) scale(${scale})" fill="#${esc(mark.hex)}"/>`;
   } else if (mark.kind === 'remote') {
@@ -703,4 +784,38 @@ export function renderBrandMark(node, { x, y, size = 16 } = {}) {
             ${content}
             <rect width="${size}" height="${size}" rx="4" class="brand-mark-frame"/>
           </g>`;
+}
+
+// Non-corner placement for pack icons. Returns null when the caller should keep
+// its own corner layout. `box` is the node rectangle. All geometry is returned so
+// a renderer only swaps in coordinates: nothing here alters the artwork.
+export function brandPlacement(node, box) {
+  const mark = brandMarkFor(node);
+  if (!mark || mark.kind !== 'pack') return null;
+  const { position, size } = packPlacement(mark);
+  if (position === 'corner') return null;
+  const hasSub = Boolean(node.sublabel);
+  if (position === 'left') {
+    const left = box.x + 12;
+    return {
+      svg: renderBrandMark(node, { x: left, y: box.y + (box.height - size) / 2, size }),
+      textX: left + size + 12,
+      anchor: 'start',
+      fitWidth: box.width - railReserve(mark),
+      labelY: hasSub ? box.y + box.height / 2 - 2 : box.y + box.height / 2 + 4,
+      subY: box.y + box.height / 2 + 14,
+      sigil: { x: box.x + box.width - 22, y: box.y + 6 },
+    };
+  }
+  const top = box.y + 10;
+  const labelY = top + size + 18;
+  return {
+    svg: renderBrandMark(node, { x: box.x + (box.width - size) / 2, y: top, size }),
+    textX: box.x + box.width / 2,
+    anchor: 'middle',
+    fitWidth: box.width - railReserve(mark),
+    labelY,
+    subY: labelY + 15,
+    sigil: { x: box.x + 6, y: box.y + 6 },
+  };
 }

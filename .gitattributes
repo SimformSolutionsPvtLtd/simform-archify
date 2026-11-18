@@ -21,3 +21,7 @@
 
 # Release archives contain binary bytes and must not be line-normalized.
 archify.zip binary
+
+# Simform fork: Microsoft icon SVGs are byte-exact copies of the official downloads (their
+# SHA-256 values are in archify/icon-packs/catalog.json). Do not normalize line endings.
+/archify/icon-packs/** -text

@@ -16,6 +16,8 @@
     "check:viewer": "node ../scripts/generate-viewer.mjs --check",
     "generate:brand-marks": "node scripts/generate-brand-marks.mjs",
     "check:brand-marks": "node scripts/generate-brand-marks.mjs --check",
+    "sync:icon-packs": "node scripts/sync-icon-packs.mjs --download",
+    "check:icon-packs": "node scripts/sync-icon-packs.mjs --check",
     "generate:validators": "node scripts/generate-validators.mjs",
     "check:validators": "node scripts/generate-validators.mjs --check",
     "check:release-identity": "node ../scripts/check-release-identity.mjs",

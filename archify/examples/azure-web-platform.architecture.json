@@ -1,0 +1,243 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Azure web platform",
+    "subtitle": "Reference architecture with Azure service icons",
+    "output": "azure-web-platform.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "users",
+      "type": "external",
+      "label": "Users",
+      "sublabel": "Browser / Mobile",
+      "pos": [
+        40,
+        300
+      ],
+      "size": [
+        150,
+        84
+      ]
+    },
+    {
+      "id": "entra",
+      "type": "security",
+      "label": "Microsoft Entra ID",
+      "sublabel": "OIDC sign-in",
+      "brand": "entra-id",
+      "pos": [
+        40,
+        120
+      ],
+      "size": [
+        230,
+        84
+      ]
+    },
+    {
+      "id": "afd",
+      "type": "cloud",
+      "label": "Front Door",
+      "sublabel": "WAF + routing",
+      "brand": "front door",
+      "pos": [
+        280,
+        300
+      ],
+      "size": [
+        220,
+        84
+      ]
+    },
+    {
+      "id": "blob",
+      "type": "cloud",
+      "label": "Storage Account",
+      "sublabel": "static assets",
+      "brand": "storage account",
+      "pos": [
+        280,
+        450
+      ],
+      "size": [
+        220,
+        84
+      ]
+    },
+    {
+      "id": "app",
+      "type": "backend",
+      "label": "App Service",
+      "sublabel": "API + web",
+      "brand": "app service",
+      "pos": [
+        590,
+        300
+      ],
+      "size": [
+        220,
+        84
+      ]
+    },
+    {
+      "id": "kv",
+      "type": "security",
+      "label": "Key Vault",
+      "sublabel": "secrets",
+      "brand": "key vault",
+      "pos": [
+        590,
+        120
+      ],
+      "size": [
+        220,
+        84
+      ]
+    },
+    {
+      "id": "sql",
+      "type": "database",
+      "label": "Azure SQL",
+      "sublabel": "primary",
+      "brand": "azure sql",
+      "pos": [
+        900,
+        300
+      ],
+      "size": [
+        220,
+        84
+      ]
+    },
+    {
+      "id": "sb",
+      "type": "messagebus",
+      "label": "Service Bus",
+      "sublabel": "job queue",
+      "brand": "service bus",
+      "pos": [
+        590,
+        450
+      ],
+      "size": [
+        220,
+        84
+      ]
+    },
+    {
+      "id": "fn",
+      "type": "backend",
+      "label": "Functions",
+      "sublabel": "async jobs",
+      "brand": "functions",
+      "pos": [
+        900,
+        450
+      ],
+      "size": [
+        220,
+        84
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "users-to-afd",
+      "from": "users",
+      "to": "afd",
+      "label": "sends requests",
+      "variant": "emphasis"
+    },
+    {
+      "id": "users-to-entra",
+      "from": "users",
+      "to": "entra",
+      "label": "authenticates",
+      "variant": "security",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "afd-to-app",
+      "from": "afd",
+      "to": "app",
+      "label": "routes traffic"
+    },
+    {
+      "id": "afd-to-blob",
+      "from": "afd",
+      "to": "blob",
+      "label": "serves static content",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "app-to-kv",
+      "from": "app",
+      "to": "kv",
+      "label": "reads secrets",
+      "variant": "security",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "app-to-sql",
+      "from": "app",
+      "to": "sql",
+      "label": "persists data"
+    },
+    {
+      "id": "app-to-sb",
+      "from": "app",
+      "to": "sb",
+      "label": "sends messages",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "sb-to-fn",
+      "from": "sb",
+      "to": "fn",
+      "label": "triggers worker"
+    },
+    {
+      "id": "fn-to-sql",
+      "from": "fn",
+      "to": "sql",
+      "label": "stores results",
+      "fromSide": "top",
+      "toSide": "bottom"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "violet",
+      "title": "Edge",
+      "items": [
+        "Front Door terminates TLS and applies WAF rules",
+        "Static assets are served from a storage account"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Application",
+      "items": [
+        "App Service hosts the API and web front end",
+        "Service Bus decouples slow work; Functions drain the queue"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Identity and secrets",
+      "items": [
+        "Microsoft Entra ID signs users in with OIDC",
+        "Secrets stay in Key Vault, never in app settings"
+      ]
+    }
+  ]
+}

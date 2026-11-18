@@ -1,88 +1,95 @@
 /* ==========================================================
    THEME VARIABLES — switch by toggling [data-theme] on <html>
+
+   Simform fork: the default ("classic") preset carries the Simform
+   design system. Light is the canvas (#f4f1fb, white surfaces, plum
+   text); dark uses the Simform dark neutrals. Brand red (light) and
+   coral (dark) are reserved for ONE highlight: the emphasised flow.
+   Node types use the sanctioned purple / teal / orange / neutral
+   ramp, never red. See DECISIONS.md (D-04) for the type mapping.
    ========================================================== */
 :root,
 [data-theme="dark"] {
-  --bg: #020617;
-  --grid: #1e293b;
-  --canvas-dot: rgba(148, 163, 184, 0.16);
-  --text: #ffffff;
-  --text-muted: #94a3b8;
-  --text-dim: #475569;
+  --bg: #18052f;
+  --grid: #241043;
+  --canvas-dot: rgba(179, 168, 199, 0.18);
+  --text: #f3eef9;
+  --text-muted: #b3a8c7;
+  --text-dim: color-mix(in srgb, #b3a8c7 68%, #18052f);
   /* UI chrome and menu hints need more contrast than SVG .t-dim accents */
-  --text-faint: #7d8da1;
+  --text-faint: #b3a8c7;
 
-  --panel: rgba(15, 23, 42, 0.5);
-  --panel-border: #1e293b;
-  --lane-fill: rgba(15, 23, 42, 0.22);
-  --lane-stroke: #334155;
+  --panel: rgba(36, 16, 67, 0.72);
+  --panel-border: #3a2a5a;
+  --lane-fill: rgba(36, 16, 67, 0.4);
+  --lane-stroke: rgba(179, 168, 199, 0.38);
 
-  --arrow: #94a3b8;
-  --arrow-emphasis: #34d399;
+  --arrow: #b3a8c7;
+  --arrow-emphasis: #ef5366;
 
   /* Opaque mask color used behind semi-transparent component fills
      so the arrows drawn underneath are properly hidden. */
-  --mask: #0f172a;
+  --mask: color-mix(in srgb, #18052f 50%, #241043);
 
-  --frontend-fill:    rgba(8, 51, 68, 0.4);
-  --frontend-stroke:  #22d3ee;
-  --backend-fill:     rgba(6, 78, 59, 0.4);
-  --backend-stroke:   #34d399;
-  --database-fill:    rgba(76, 29, 149, 0.4);
-  --database-stroke:  #a78bfa;
-  --cloud-fill:       rgba(120, 53, 15, 0.3);
-  --cloud-stroke:     #fbbf24;
-  --security-fill:    rgba(136, 19, 55, 0.4);
-  --security-stroke:  #fb7185;
-  --messagebus-fill:  rgba(251, 146, 60, 0.3);
-  --messagebus-stroke:#fb923c;
-  --external-fill:    rgba(30, 41, 59, 0.5);
-  --external-stroke:  #94a3b8;
+  --frontend-fill:    rgba(91, 42, 158, 0.34);
+  --frontend-stroke:  color-mix(in srgb, #5b2a9e 40%, #f3eef9);
+  --backend-fill:     rgba(52, 160, 164, 0.18);
+  --backend-stroke:   #34a0a4;
+  --database-fill:    rgba(56, 13, 111, 0.5);
+  --database-stroke:  color-mix(in srgb, #380d6f 35%, #f3eef9);
+  --cloud-fill:       rgba(216, 67, 21, 0.2);
+  --cloud-stroke:     color-mix(in srgb, #d84315 70%, #f3eef9);
+  --security-fill:    rgba(243, 238, 249, 0.07);
+  --security-stroke:  #f3eef9;
+  --messagebus-fill:  rgba(113, 120, 190, 0.22);
+  --messagebus-stroke: color-mix(in srgb, color-mix(in srgb, #5b2a9e 50%, #34a0a4) 55%, #f3eef9);
+  --external-fill:    rgba(179, 168, 199, 0.12);
+  --external-stroke:  #b3a8c7;
 
-  --toolbar-bg:       rgba(15, 23, 42, 0.8);
-  --toolbar-border:   #334155;
-  --toolbar-text:     #e2e8f0;
-  --toolbar-hover:    rgba(15, 23, 42, 0.95);
-  --toolbar-menu-bg:  #0f172a;
+  --toolbar-bg:       rgba(36, 16, 67, 0.86);
+  --toolbar-border:   #3a2a5a;
+  --toolbar-text:     #f3eef9;
+  --toolbar-hover:    rgba(36, 16, 67, 0.96);
+  --toolbar-menu-bg:  #241043;
 }
 
 [data-theme="light"] {
-  --bg: #f4f5f7;
-  --grid: #e9edf2;
-  --canvas-dot: #e2e7ec;
-  --text: #111827;
-  --text-muted: #5b6474;
-  --text-dim: #9aa3b2;
-  --text-faint: #6b7280;
+  --bg: #f4f1fb;
+  --grid: #e5def1;
+  --canvas-dot: #e5def1;
+  --text: #1a1024;
+  --text-muted: #6b6478;
+  --text-dim: #6b6478;
+  --text-faint: #6b6478;
 
   --panel: #ffffff;
-  --panel-border: #e5e7eb;
-  --lane-fill: rgba(248, 250, 252, 0.65);
-  --lane-stroke: #cbd5e1;
+  --panel-border: #e5def1;
+  --lane-fill: rgba(236, 231, 246, 0.6);
+  --lane-stroke: rgba(107, 100, 120, 0.42);
 
-  --arrow: #64748b;
-  --arrow-emphasis: #059669;
+  --arrow: #6b6478;
+  --arrow-emphasis: #e0314c;
 
   --mask: #ffffff;
 
-  --frontend-fill: rgba(34, 211, 238, 0.15);
-  --frontend-stroke: #0891b2;
-  --backend-fill: rgba(52, 211, 153, 0.18);
-  --backend-stroke: #059669;
-  --database-fill: rgba(167, 139, 250, 0.2);
-  --database-stroke: #7c3aed;
-  --cloud-fill: rgba(251, 191, 36, 0.18);
-  --cloud-stroke: #d97706;
-  --security-fill: rgba(251, 113, 133, 0.15);
-  --security-stroke: #e11d48;
-  --messagebus-fill: rgba(251, 146, 60, 0.15);
-  --messagebus-stroke: #ea580c;
-  --external-fill: rgba(148, 163, 184, 0.18);
-  --external-stroke: #64748b;
+  --frontend-fill: rgba(91, 42, 158, 0.08);
+  --frontend-stroke: #5b2a9e;
+  --backend-fill: rgba(52, 160, 164, 0.12);
+  --backend-stroke: color-mix(in srgb, #34a0a4 72%, #1a1024);
+  --database-fill: rgba(56, 13, 111, 0.09);
+  --database-stroke: #380d6f;
+  --cloud-fill: rgba(216, 67, 21, 0.07);
+  --cloud-stroke: #d84315;
+  --security-fill: rgba(26, 16, 36, 0.05);
+  --security-stroke: #1a1024;
+  --messagebus-fill: rgba(71, 101, 161, 0.1);
+  --messagebus-stroke: color-mix(in srgb, #5b2a9e 50%, #34a0a4);
+  --external-fill: rgba(107, 100, 120, 0.1);
+  --external-stroke: #6b6478;
 
-  --toolbar-bg:       rgba(255, 255, 255, 0.92);
-  --toolbar-border:   #cbd5e1;
-  --toolbar-text:     #334155;
+  --toolbar-bg:       rgba(255, 255, 255, 0.94);
+  --toolbar-border:   #e5def1;
+  --toolbar-text:     #1a1024;
   --toolbar-hover:    #ffffff;
   --toolbar-menu-bg:  #ffffff;
 }
@@ -312,7 +319,7 @@
 
 body {
   --archify-page-top: 2rem;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'Noto Sans', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, 'SF Pro Text', 'Segoe UI', Roboto, 'Noto Sans CJK SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   -webkit-font-smoothing: antialiased;
   background: var(--bg);
   min-height: 100vh;
@@ -738,7 +745,7 @@ html[data-motion="still"] svg {
 }
 
 svg {
-  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', 'Liberation Mono', 'Noto Sans Mono CJK SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', monospace;
+  font-family: 'Inter', system-ui, -apple-system, 'SF Pro Text', 'Segoe UI', Roboto, 'Noto Sans CJK SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   width: 100%;
   min-width: min(900px, 100%);
   display: block;

@@ -36,7 +36,8 @@ test('showcase intake requires reproducible proof, redaction, and explicit publi
   assert.match(template, /required:\s*true/g);
 
   const submissionUrl = 'https://github.com/tt-a1i/archify/issues/new?template=showcase.yml';
-  for (const readme of ['README.md', 'README_EN.md', 'README_ZH.md', 'README_JA.md']) {
+  // Simform fork: README.md / README_EN.md are the fork's own README (DECISIONS.md D-14); upstream proof is asserted on the upstream translations.
+  for (const readme of ['README_ZH.md', 'README_JA.md']) {
     assert.match(read(readme), new RegExp(submissionUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), `${readme}: direct showcase link`);
   }
 });
