@@ -1,0 +1,23 @@
+{
+  "name": "simform-archify",
+  "description": "Simform-branded architecture diagrams as explorable standalone HTML, with official Azure and Microsoft icons, ready to embed in SharePoint.",
+  "owner": {
+    "name": "Simform Solutions Pvt Ltd",
+    "email": "innovations@simformsolutions.com",
+    "url": "https://github.com/SimformSolutionsPvtLtd"
+  },
+  "plugins": [
+    {
+      "name": "simform-archify",
+      "source": "./archify",
+      "description": "Simform-branded, validated architecture, workflow, sequence, data-flow and other diagrams as explorable standalone HTML, with official Azure, Microsoft 365, Entra, Fabric and Dynamics 365 icons, ready to embed in SharePoint.",
+      "author": {
+        "name": "Simform Solutions Pvt Ltd",
+        "email": "innovations@simformsolutions.com"
+      },
+      "homepage": "https://github.com/SimformSolutionsPvtLtd/simform-archify",
+      "license": "Apache-2.0",
+      "keywords": ["diagram", "architecture", "azure", "sharepoint", "simform"]
+    }
+  ]
+}
