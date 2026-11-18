@@ -39,10 +39,11 @@ test('catalogue is complete and every icon file matches its digest', () => {
   const result = spawnSync(process.execPath, [path.join(skillRoot, 'scripts', 'sync-icon-packs.mjs'), '--check'], { encoding: 'utf8' });
   assert.equal(result.status, 0, result.stderr + result.stdout);
   const { icons, packs } = loadIconCatalog();
-  assert.deepEqual(Object.keys(packs).sort(), ['azure', 'd365', 'entra', 'fabric', 'm365']);
+  assert.deepEqual(Object.keys(packs).sort(), ['azure', 'd365', 'entra', 'fabric', 'generic', 'm365']);
   for (const pack of Object.keys(packs)) {
     assert.ok(icons.some((icon) => icon.pack === pack), `${pack} has icons`);
-    assert.ok(packs[pack].page.startsWith('https://learn.microsoft.com/'), `${pack} records its official page`);
+    const official = pack === 'generic' ? 'https://lucide.dev/' : 'https://learn.microsoft.com/';
+    assert.ok(packs[pack].page.startsWith(official), `${pack} records its official page`);
   }
   assert.ok(icons.length > 1000);
 });
@@ -112,7 +113,9 @@ test('an Azure icon renders once per node as unmodified, uniquely-id\'d artwork 
   assert.equal(result.status, 0, result.stderr);
   const html = fs.readFileSync(output, 'utf8');
   assert.equal((html.match(/data-brand-pack="azure"/g) || []).length, 3);
-  assert.equal((html.match(/class="brand-mark-pack-art"/g) || []).length, 3);
+  // Three Azure icons, plus the generic users icon inferred for the plain node.
+  assert.equal((html.match(/class="brand-mark-pack-art"/g) || []).length, 4);
+  assert.equal((html.match(/data-brand-pack="generic"/g) || []).length, 1);
   assert.match(html, /data-brand-mark="azure-key-vaults"/);
   assert.match(html, /data-brand-mark="azure-app-services"/);
   assert.match(html, /data-brand-source="https:\/\/learn\.microsoft\.com\/en-us\/azure\/architecture\/icons\/"/);
@@ -154,4 +157,91 @@ test('a node too narrow for the larger pack icon is reported, not silently clipp
   const result = run(['validate', 'architecture', input, '--quality', 'showcase']);
   assert.notEqual(result.status, 0);
   assert.match(result.stdout + result.stderr, /brand top rail/);
+});
+
+test('generic icons resolve by plain component names and keep Microsoft names for Azure', () => {
+  assert.equal(findPackIcon('queue').id, 'generic-queue');
+  assert.equal(findPackIcon('api server').id, 'generic-api-server');
+  assert.equal(findPackIcon('browser').id, 'generic-browser');
+  assert.equal(findPackIcon('worker').id, 'generic-worker');
+  assert.equal(findPackIcon('azure-storage-queue').pack, 'azure');
+  assert.equal(findPackIcon('app service').pack, 'azure');
+  assert.ok(listPackIcons('generic').filter((icon) => icon.pack === 'generic').length >= 40);
+});
+
+test('a generic icon is line art in the node colour, not Microsoft artwork', () => {
+  const input = path.join(tmp, 'generic.architecture.json');
+  const output = path.join(tmp, 'generic.html');
+  fs.writeFileSync(input, JSON.stringify(diagram([
+    { id: 'q', type: 'messagebus', label: 'Job queue', brand: 'queue', pos: [40, 40], size: [210, 76] },
+  ])));
+  assert.equal(run(['render', 'architecture', input, output, '--quality', 'showcase']).status, 0);
+  const html = fs.readFileSync(output, 'utf8');
+  assert.match(html, /class="brand-mark brand-mark-line s-messagebus"/);
+  assert.match(html, /data-brand-pack="generic"/);
+  assert.match(html, /stroke="currentColor" stroke-width="1\.75"/);
+});
+
+test('nodes without a brand get an inferred generic icon only beside Microsoft icons', () => {
+  const nodes = [
+    { id: 'kv', type: 'security', label: 'Key Vault', brand: 'key vault', pos: [40, 40], size: [210, 76] },
+    { id: 'jobs', type: 'messagebus', label: 'Job queue', pos: [340, 40], size: [210, 76] },
+    { id: 'cdn', type: 'cloud', label: 'Edge', pos: [640, 40], size: [210, 76] },
+    { id: 'tiny', type: 'backend', label: 'Worker', pos: [40, 200], size: [90, 60] },
+  ];
+  const input = path.join(tmp, 'infer.architecture.json');
+  const output = path.join(tmp, 'infer.html');
+  fs.writeFileSync(input, JSON.stringify(diagram(nodes)));
+  assert.equal(run(['render', 'architecture', input, output, '--quality', 'showcase']).status, 0);
+  const html = fs.readFileSync(output, 'utf8');
+  assert.match(html, /data-brand-mark="generic-queue"/);
+  assert.match(html, /data-brand-mark="generic-cloud-service"/, 'type fallback when no word matches');
+  assert.doesNotMatch(html, /data-brand-mark="generic-worker"/, 'a node too narrow for an icon keeps none');
+
+  const alone = path.join(tmp, 'alone.architecture.json');
+  const aloneOut = path.join(tmp, 'alone.html');
+  fs.writeFileSync(alone, JSON.stringify(diagram(nodes.slice(1, 3))));
+  assert.equal(run(['render', 'architecture', alone, aloneOut, '--quality', 'showcase']).status, 0);
+  assert.doesNotMatch(fs.readFileSync(aloneOut, 'utf8'), /data-brand-pack/, 'no icons are added when the diagram uses none');
+});
+
+test('SIMFORM_GENERIC_ICONS=off switches the inference off', () => {
+  const input = path.join(tmp, 'off.architecture.json');
+  const output = path.join(tmp, 'off.html');
+  fs.writeFileSync(input, JSON.stringify(diagram([
+    { id: 'kv', type: 'security', label: 'Key Vault', brand: 'key vault', pos: [40, 40], size: [210, 76] },
+    { id: 'jobs', type: 'messagebus', label: 'Job queue', pos: [340, 40], size: [210, 76] },
+  ])));
+  const result = spawnSync(process.execPath, [cli, 'render', 'architecture', input, output, '--quality', 'showcase'], {
+    encoding: 'utf8',
+    env: { ...process.env, SIMFORM_GENERIC_ICONS: 'off' },
+  });
+  assert.equal(result.status, 0, result.stderr);
+  assert.doesNotMatch(fs.readFileSync(output, 'utf8'), /data-brand-pack="generic"/);
+});
+
+test('AI and data stack names resolve to built-in marks, and Microsoft Agent Framework to the generic agent icon', () => {
+  const brands = (query) => run(['brands', query, '--json']);
+  for (const [query, id] of [['qdrant', 'qdrant'], ['langchain', 'langchain'], ['llamaindex', 'llamaindex'], ['agno', 'agno'], ['postgresql', 'postgresql'], ['redis', 'redis'], ['react', 'react'], ['python', 'python'], ['typescript', 'typescript'], ['mongodb', 'mongodb']]) {
+    const result = brands(query);
+    assert.equal(result.status, 0, result.stderr);
+    assert.ok(result.stdout.includes(`"${id}"`), `${query} resolves to ${id}`);
+  }
+  assert.equal(findPackIcon('microsoft agent framework').id, 'generic-agent');
+  assert.equal(findPackIcon('vector store').id, 'generic-vector-database');
+});
+
+test('built-in marks use the 48px gutter in architecture diagrams and fall back to the small badge on a narrow node', () => {
+  const input = path.join(tmp, 'brands-gutter.architecture.json');
+  const output = path.join(tmp, 'brands-gutter.html');
+  fs.writeFileSync(input, JSON.stringify(diagram([
+    { id: 'wide', type: 'database', label: 'Qdrant', brand: 'qdrant', pos: [40, 40], size: [210, 76] },
+    { id: 'narrow', type: 'database', label: 'PostgreSQL', brand: 'postgresql', pos: [340, 40], size: [100, 60] },
+  ])));
+  const result = run(['render', 'architecture', input, output, '--quality', 'showcase']);
+  assert.equal(result.status, 0, result.stderr);
+  const html = fs.readFileSync(output, 'utf8');
+  const badge = (id) => html.match(new RegExp(`data-brand-mark="${id}"[^>]+>\\s*<rect width="([\\d.]+)"`))?.[1];
+  assert.equal(badge('qdrant'), '48');
+  assert.equal(badge('postgresql'), '16', 'a node too narrow for the gutter keeps the corner badge');
 });

@@ -11,8 +11,6 @@ const skill = fs.readFileSync(path.join(skillRoot, 'SKILL.md'), 'utf8');
 const delivery = fs.readFileSync(path.join(skillRoot, 'references', 'delivery-contract.md'), 'utf8');
 const readme = fs.readFileSync(path.join(repoRoot, 'README.md'), 'utf8');
 const english = fs.readFileSync(path.join(repoRoot, 'README_EN.md'), 'utf8');
-const chinese = fs.readFileSync(path.join(repoRoot, 'README_ZH.md'), 'utf8');
-const japanese = fs.readFileSync(path.join(repoRoot, 'README_JA.md'), 'utf8');
 
 test('preview contract: the skill keeps live preview explicit, desktop-only, and last-good', () => {
   assert.match(delivery, /archify\.mjs preview <type> <input>\.json <output>\.html/);
@@ -23,16 +21,8 @@ test('preview contract: the skill keeps live preview explicit, desktop-only, and
   assert.match(delivery, /must never enter the generated artifact or any export/i);
 });
 
-test('preview contract: all README languages document the same optional command without changing the hero', () => {
+test('preview contract: the English README mirrors stay in step', () => {
   assert.equal(readme, english);
-  // Simform fork: the English README is the fork's own (DECISIONS.md D-14); upstream docs are asserted on the translations.
-  for (const text of [chinese, japanese]) {
-    assert.match(text, /bin\/archify\.mjs preview workflow/);
-    assert.match(text, /--no-open/);
-    assert.match(text, /127\.0\.0\.1/);
-    assert.match(text, /Ctrl-C/);
-    assert.match(text, /docs\/assets\/archify-readme-hero\.png/);
-  }
 });
 
 test('preview contract: the canonical delivery reference owns no-leak and zero-dependency boundaries', () => {

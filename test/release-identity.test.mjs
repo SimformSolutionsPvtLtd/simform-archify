@@ -49,18 +49,6 @@ function writeValidDevelopmentFixture(root, overrides = {}) {
     `Current development version: \`v${version}\``,
     '',
   ].join('\n');
-  const chinese = [
-    '![开发版本](https://img.shields.io/badge/version-2.13.0--dev.0-blue)',
-    '',
-    `当前开发版本：\`v${version}\``,
-    '',
-  ].join('\n');
-  const japanese = [
-    '![開発版](https://img.shields.io/badge/version-2.13.0--dev.0-blue)',
-    '',
-    `現在の開発版: \`v${version}\``,
-    '',
-  ].join('\n');
   const files = {
     'archify/package.json': JSON.stringify({ version }),
     'archify/package-lock.json': JSON.stringify({ version, packages: { '': { version } } }),
@@ -90,14 +78,6 @@ function writeValidDevelopmentFixture(root, overrides = {}) {
     ].join('\n'),
     'README.md': english,
     'README_EN.md': english,
-    'README_ZH.md': chinese,
-    'README_JA.md': japanese,
-    'scripts/start-template.html': 'development · 开发版 · [[ARCHIFY_VERSION]]',
-    'scripts/guide-template.html': 'development · 开发版 · [[ARCHIFY_VERSION]]',
-    'scripts/gallery-template.html': 'development · 开发版 · [[ARCHIFY_VERSION]]',
-    'docs/index.html': `<span>development · v${version} · 开发版 · 9/9 checks</span>`,
-    'docs/start.html': `<span>development · v${version} · 开发版</span>`,
-    'ROADMAP.md': `The current development line is \`v${version}\`; it contains the work under Changelog Unreleased and is not a stable release.`,
   };
   for (const [relativePath, content] of Object.entries({ ...files, ...overrides })) {
     writeFile(root, relativePath, content);
@@ -110,18 +90,6 @@ function writeValidStableFixture(root, overrides = {}) {
     '![Stable Version](https://img.shields.io/badge/version-2.13.0-blue)',
     '',
     `Current stable version: \`v${version}\``,
-    '',
-  ].join('\n');
-  const chinese = [
-    '![稳定版本](https://img.shields.io/badge/version-2.13.0-blue)',
-    '',
-    `当前稳定版本：\`v${version}\``,
-    '',
-  ].join('\n');
-  const japanese = [
-    '![安定版](https://img.shields.io/badge/version-2.13.0-blue)',
-    '',
-    `現在の安定版: \`v${version}\``,
     '',
   ].join('\n');
   const files = {
@@ -149,14 +117,6 @@ function writeValidStableFixture(root, overrides = {}) {
     ].join('\n'),
     'README.md': english,
     'README_EN.md': english,
-    'README_ZH.md': chinese,
-    'README_JA.md': japanese,
-    'scripts/start-template.html': 'stable · 稳定版 · [[ARCHIFY_VERSION]]',
-    'scripts/guide-template.html': 'stable · 稳定版 · [[ARCHIFY_VERSION]]',
-    'scripts/gallery-template.html': 'stable · 稳定版 · [[ARCHIFY_VERSION]]',
-    'docs/index.html': `<span>stable · v${version} · 稳定版 · 9/9 checks</span>`,
-    'docs/start.html': `<span>stable · v${version} · 稳定版</span>`,
-    'ROADMAP.md': `The current stable version is \`v${version}\`.`,
   };
   for (const [relativePath, content] of Object.entries({ ...files, ...overrides })) {
     writeFile(root, relativePath, content);
@@ -357,91 +317,12 @@ test('package, lockfile, Skill metadata, escaped Shields badge, and public docs 
     ].join('\n');
     writeFile(fixture, 'README.md', staleEnglish);
     writeFile(fixture, 'README_EN.md', staleEnglish);
-    writeFile(fixture, 'README_ZH.md', '![Version](https://img.shields.io/badge/version-2.13.0-blue)\n\nArchify 2.12 包含未发布能力。\n');
-    writeFile(fixture, 'README_JA.md', '![Version](https://img.shields.io/badge/version-2.13.0-blue)\n\nArchify 2.12 は未リリース機能を含みます。\n');
-    writeFile(fixture, 'docs/index.html', '<span>Agent Skill · v2.12.0</span>');
-    writeFile(fixture, 'docs/start.html', '<span>Archify v2.12.0</span>');
 
     const result = runCheck(fixture);
     assert.notEqual(result.status, 0);
     assert.match(result.stderr, /package-lock\.json must match 2\.13\.0-dev\.0/);
     assert.match(result.stderr, /SKILL\.md metadata version 2\.12 must map to package 2\.13\.0-dev\.0/);
     assert.match(result.stderr, /README\.md must advertise development identity v2\.13\.0-dev\.0/);
-    assert.match(result.stderr, /README_JA\.md must advertise development identity v2\.13\.0-dev\.0/);
-    assert.match(result.stderr, /docs\/index\.html must advertise development identity v2\.13\.0-dev\.0/);
-    assert.match(result.stderr, /docs\/start\.html must advertise development identity v2\.13\.0-dev\.0/);
-  } finally {
-    fs.rmSync(fixture, { recursive: true, force: true });
-  }
-});
-
-test('landing proof receipt matches the current nine-check artifact contract', () => {
-  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'archify-release-identity-'));
-  try {
-    writeValidDevelopmentFixture(fixture, {
-      'docs/index.html': '<span>development · v2.13.0-dev.0 · 开发版 · 8/8 checks</span>',
-    });
-
-    const result = runCheck(fixture);
-    assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /docs\/index\.html proof receipt must say 9\/9/);
-  } finally {
-    fs.rmSync(fixture, { recursive: true, force: true });
-  }
-});
-
-test('landing rejects every stale N/N contract count even when 9/9 is also present', () => {
-  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'archify-release-identity-'));
-  try {
-    writeValidDevelopmentFixture(fixture, {
-      'docs/index.html': [
-        '<span>development · v2.13.0-dev.0 · 开发版 · 9/9 checks</span>',
-        '<span>legacy receipt · 7/7 checks</span>',
-      ].join('\n'),
-    });
-
-    const result = runCheck(fixture);
-    assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /every N\/N proof receipt must be exactly 9\/9; found 7\/7/);
-  } finally {
-    fs.rmSync(fixture, { recursive: true, force: true });
-  }
-});
-
-test('Raven is not a generated agent-switcher target', () => {
-  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'archify-release-identity-'));
-  try {
-    writeValidDevelopmentFixture(fixture, {
-      'docs/start.html': [
-        '<span>development · v2.13.0-dev.0 · 开发版</span>',
-        '<button data-agent="raven">Raven</button>',
-        '<pre>npx skills add tt-a1i/archify --agent raven</pre>',
-      ].join('\n'),
-    });
-
-    const result = runCheck(fixture);
-    assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /docs\/start\.html: Raven is not an agent-switcher target/);
-  } finally {
-    fs.rmSync(fixture, { recursive: true, force: true });
-  }
-});
-
-test('the Japanese README must carry its own development marker, not the English one', () => {
-  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'archify-release-identity-'));
-  try {
-    writeValidDevelopmentFixture(fixture, {
-      'README_JA.md': [
-        '![開発版](https://img.shields.io/badge/version-2.13.0--dev.0-blue)',
-        '',
-        'Current development version: `v2.13.0-dev.0`',
-        '',
-      ].join('\n'),
-    });
-
-    const result = runCheck(fixture);
-    assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /README_JA\.md must advertise development identity v2\.13\.0-dev\.0/);
   } finally {
     fs.rmSync(fixture, { recursive: true, force: true });
   }
@@ -457,96 +338,6 @@ test('renderer template generator carries the complete package prerelease identi
     const result = runCheck(fixture);
     assert.notEqual(result.status, 0);
     assert.match(result.stderr, /archify\/assets\/template\.html generator must be archify 2\.13\.0-dev\.0/);
-  } finally {
-    fs.rmSync(fixture, { recursive: true, force: true });
-  }
-});
-
-test('roadmap current identity follows the package release state', () => {
-  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'archify-release-identity-'));
-  try {
-    writeValidDevelopmentFixture(fixture, {
-      'ROADMAP.md': 'The current development line is `v2.12.0`; it is not a stable release.',
-    });
-
-    const result = runCheck(fixture);
-    assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /ROADMAP\.md must declare the current development line as v2\.13\.0-dev\.0/);
-  } finally {
-    fs.rmSync(fixture, { recursive: true, force: true });
-  }
-});
-
-test('generated public-page templates keep a development marker and version placeholder', () => {
-  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'archify-release-identity-'));
-  try {
-    writeValidDevelopmentFixture(fixture, {
-      'scripts/gallery-template.html': 'Proof Lab / 2.12.0',
-    });
-
-    const result = runCheck(fixture);
-    assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /scripts\/gallery-template\.html must use \[\[ARCHIFY_VERSION\]\] with development and 开发版 labels/);
-  } finally {
-    fs.rmSync(fixture, { recursive: true, force: true });
-  }
-});
-
-test('stable public-page templates reject development labels on version-bearing fallbacks', () => {
-  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'archify-release-identity-'));
-  try {
-    writeValidStableFixture(fixture, {
-      'scripts/guide-template.html': [
-        '<span data-i18n="versionLabel">Scenario guide / development / v[[ARCHIFY_VERSION]]</span>',
-        "versionLabel:'Scenario guide / stable / v[[ARCHIFY_VERSION]]'",
-        "versionLabel:'场景指南 / 稳定版 / v[[ARCHIFY_VERSION]]'",
-      ].join('\n'),
-    });
-
-    const result = runCheck(fixture);
-    assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /scripts\/guide-template\.html must not label \[\[ARCHIFY_VERSION\]\] as development or 开发版/);
-  } finally {
-    fs.rmSync(fixture, { recursive: true, force: true });
-  }
-});
-
-test('public-page identity ignores compact SVG coordinates without hiding real version literals', () => {
-  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'archify-release-identity-'));
-  const templatePath = 'scripts/start-template.html';
-  const identity = 'development · 开发版 · [[ARCHIFY_VERSION]]';
-  const coordinates = 'M8 1.6l1.9 3.9 4.3.6-3.1 3 .7 4.3L8 11.4z';
-  try {
-    for (const pathElement of [
-      `<path d="${coordinates}"/>`,
-      `<path d='${coordinates}'/>`,
-      `<path aria-label="x > y" d = "${coordinates}"/>`,
-    ]) {
-      writeValidDevelopmentFixture(fixture, {
-        [templatePath]: `${identity}<svg>${pathElement}</svg>`,
-      });
-      const valid = runCheck(fixture);
-      assert.equal(valid.status, 0, valid.stderr);
-    }
-
-    // A nearby path attribute, another element's d attribute, and visible text
-    // still belong to the release-identity contract, not SVG coordinate data.
-    for (const content of [
-      `<svg><path data-version="2.12.0" d="${coordinates}"/></svg>`,
-      `<svg><path d="${coordinates}" data-version="2.12.0"/></svg>`,
-      `<div d="2.12.0"></div>`,
-      `<path-data d="2.12.0"></path-data>`,
-      `<svg><path aria-label="release d='2.12.0'" d="M0 0"/></svg>`,
-      `<div title="<path d='2.12.0'>"></div>`,
-      `<script>const markup = "<path d='2.12.0'>";</script>`,
-      `<path d="2.12.0"></path>`,
-      `<svg><path d="${coordinates}"/></svg><span>2.12.0</span>`,
-    ]) {
-      writeFile(fixture, templatePath, `${identity}${content}`);
-      const stale = runCheck(fixture);
-      assert.notEqual(stale.status, 0, content);
-      assert.match(stale.stderr, /scripts\/start-template\.html must use \[\[ARCHIFY_VERSION\]\]/);
-    }
   } finally {
     fs.rmSync(fixture, { recursive: true, force: true });
   }

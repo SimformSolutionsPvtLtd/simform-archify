@@ -12,13 +12,13 @@
       "id": "users",
       "type": "external",
       "label": "Users",
-      "sublabel": "Browser / Mobile",
+      "sublabel": "Web and mobile",
       "pos": [
         40,
         300
       ],
       "size": [
-        150,
+        180,
         84
       ]
     },
@@ -44,7 +44,7 @@
       "sublabel": "WAF + routing",
       "brand": "front door",
       "pos": [
-        280,
+        320,
         300
       ],
       "size": [
@@ -59,7 +59,7 @@
       "sublabel": "static assets",
       "brand": "storage account",
       "pos": [
-        280,
+        320,
         450
       ],
       "size": [
@@ -74,7 +74,7 @@
       "sublabel": "API + web",
       "brand": "app service",
       "pos": [
-        590,
+        630,
         300
       ],
       "size": [
@@ -89,7 +89,7 @@
       "sublabel": "secrets",
       "brand": "key vault",
       "pos": [
-        590,
+        630,
         120
       ],
       "size": [
@@ -104,7 +104,7 @@
       "sublabel": "primary",
       "brand": "azure sql",
       "pos": [
-        900,
+        940,
         300
       ],
       "size": [
@@ -119,7 +119,7 @@
       "sublabel": "job queue",
       "brand": "service bus",
       "pos": [
-        590,
+        630,
         450
       ],
       "size": [
@@ -134,7 +134,7 @@
       "sublabel": "async jobs",
       "brand": "functions",
       "pos": [
-        900,
+        940,
         450
       ],
       "size": [

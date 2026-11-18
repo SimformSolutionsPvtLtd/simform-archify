@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Microservices on Azure",
+    "subtitle": "Microservices style: gateway, independent services, events between them",
+    "output": "microservices-platform.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "Web app",
+      "sublabel": "React SPA",
+      "brand": "browser",
+      "pos": [
+        40,
+        300
+      ],
+      "size": [
+        190,
+        84
+      ]
+    },
+    {
+      "id": "entra",
+      "type": "security",
+      "label": "Microsoft Entra ID",
+      "sublabel": "OIDC sign-in",
+      "brand": "entra-id",
+      "pos": [
+        330,
+        110
+      ],
+      "size": [
+        230,
+        84
+      ]
+    },
+    {
+      "id": "apim",
+      "type": "cloud",
+      "label": "API Management",
+      "sublabel": "single entry point",
+      "brand": "api management",
+      "pos": [
+        330,
+        300
+      ],
+      "size": [
+        230,
+        84
+      ]
+    },
+    {
+      "id": "orders",
+      "type": "backend",
+      "label": "Orders service",
+      "sublabel": "owns order data",
+      "brand": "microservice",
+      "pos": [
+        650,
+        150
+      ],
+      "size": [
+        210,
+        84
+      ]
+    },
+    {
+      "id": "catalog",
+      "type": "backend",
+      "label": "Catalog service",
+      "sublabel": "owns product data",
+      "brand": "microservice",
+      "pos": [
+        650,
+        450
+      ],
+      "size": [
+        210,
+        84
+      ]
+    },
+    {
+      "id": "ordersdb",
+      "type": "database",
+      "label": "Azure SQL",
+      "sublabel": "orders store",
+      "brand": "azure sql",
+      "pos": [
+        950,
+        60
+      ],
+      "size": [
+        210,
+        84
+      ]
+    },
+    {
+      "id": "bus",
+      "type": "messagebus",
+      "label": "Service Bus",
+      "sublabel": "order events",
+      "brand": "service bus",
+      "pos": [
+        950,
+        270
+      ],
+      "size": [
+        210,
+        84
+      ]
+    },
+    {
+      "id": "cache",
+      "type": "database",
+      "label": "Cache",
+      "sublabel": "hot catalog reads",
+      "brand": "cache",
+      "pos": [
+        950,
+        480
+      ],
+      "size": [
+        210,
+        84
+      ]
+    },
+    {
+      "id": "notify",
+      "type": "backend",
+      "label": "Notification worker",
+      "sublabel": "emails and push",
+      "brand": "worker",
+      "pos": [
+        1250,
+        270
+      ],
+      "size": [
+        230,
+        84
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "web-to-apim",
+      "from": "web",
+      "to": "apim",
+      "label": "sends requests",
+      "variant": "emphasis"
+    },
+    {
+      "id": "apim-to-entra",
+      "from": "apim",
+      "to": "entra",
+      "label": "authenticates",
+      "variant": "security",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "apim-to-orders",
+      "from": "apim",
+      "to": "orders",
+      "label": "routes traffic"
+    },
+    {
+      "id": "apim-to-catalog",
+      "from": "apim",
+      "to": "catalog",
+      "label": "routes traffic"
+    },
+    {
+      "id": "orders-to-db",
+      "from": "orders",
+      "to": "ordersdb",
+      "label": "persists data"
+    },
+    {
+      "id": "orders-to-bus",
+      "from": "orders",
+      "to": "bus",
+      "label": "publishes events",
+      "variant": "dashed"
+    },
+    {
+      "id": "catalog-to-cache",
+      "from": "catalog",
+      "to": "cache",
+      "label": "reads cache"
+    },
+    {
+      "id": "bus-to-notify",
+      "from": "bus",
+      "to": "notify",
+      "label": "delivers events"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "violet",
+      "title": "Entry",
+      "items": [
+        "API Management is the only public door",
+        "Entra ID signs users in before any service sees a request"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Services",
+      "items": [
+        "Each service owns its data and is deployed on its own",
+        "Orders publish events instead of calling other services"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Messaging",
+      "items": [
+        "Service Bus carries order events to consumers",
+        "The notification worker reacts without the orders service knowing it exists"
+      ]
+    }
+  ]
+}

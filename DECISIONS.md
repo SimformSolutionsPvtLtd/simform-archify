@@ -25,6 +25,12 @@ and docs refer to them as `D-nn`.
 | D-16 | Known gaps and open items | Open |
 | D-17 | Azure connection labels follow Azure Architecture Center wording | Done |
 | D-18 | This repository is its own Claude plugin marketplace | Done |
+| D-19 | Generic components get Lucide line icons, inferred when `brand` is missing | Done |
+| D-20 | The skill asks which Azure architecture style to draw, defaulting to Microservices | Done |
+| D-21 | Viewer polish: sentence-case labels, no looping chrome, quiet legend counts | Done, review welcome |
+| D-22 | More built-in brand marks (AI and data stack); built-in marks use the 48px gutter in architecture diagrams | Done |
+| D-23 | Upstream's website, proof gallery and Pages/Cloudflare deploys are removed | Done |
+| D-24 | Upstream-only docs, evidence, benchmarks, community and integrations are removed | Done |
 
 ---
 
@@ -249,7 +255,7 @@ only Microsoft hosts and the Fabric samples repository.
   `offline-font-browser`, `export-browser` and `viewer-chrome-layout` were run (all pass); the rest of
   `npm run test:browser` was not.
 - Dark mode: `security` and `external` nodes look alike (D-04).
-- Only architecture diagrams use the 48px gutter icon; the other four icon-capable types keep the 24px corner tile (D-09).
+- Only architecture diagrams use the 48px gutter icon; the other four icon-capable types keep the 24px corner tile (D-09). Generic icons are inferred only for architecture diagrams (D-19).
 - The toolbar preset still reads "Classic" (D-03).
 - Icons for `explainer` pages and for `erd`, `tree`, `class`, `timeline`, `waterfall` are not supported
   because those types have no brand marks upstream.
@@ -296,3 +302,149 @@ install from a clean copy of the repository into an isolated config directory wo
 installed `bin/archify.mjs` ran.
 **How to reverse:** delete `.claude-plugin/` and the README section. The Skills CLI install path
 is unaffected.
+
+## D-19 Generic components get Lucide line icons, inferred when `brand` is missing
+
+**Decided:** a sixth icon pack, `generic` (49 icons, ids `generic-*`), holds [Lucide](https://lucide.dev)
+line art (ISC licence, `lucide-static` 1.75.0) for components that are not Microsoft services:
+users, browsers, API servers, workers, schedulers, gateways, queues, event buses, caches,
+databases, storage, identity, secrets, monitoring and similar. It is selected through the same
+`brand` field (`"brand": "queue"`), is listed by `archify brands`, and is refreshed with
+`node scripts/sync-icon-packs.mjs --download --only generic` (the other packs are left as they are).
+In an **architecture** diagram that already shows a Microsoft icon, a node with no `brand` gets a
+generic icon inferred from its label and `type` (`renderers/shared/generic-icons.mjs`: ordered
+keyword rules, then a fallback per node type). An explicit `brand` always wins. A node too narrow
+for icon and label keeps no icon instead of failing validation. `SIMFORM_GENERIC_ICONS=off`
+switches the inference off.
+**Why:** end users said nodes such as API server and queue had no icons, so diagrams looked half
+finished. The Azure packs have no icons for generic roles, and using an Azure product icon for a
+generic role is what Microsoft's terms and D-08 forbid. Lucide is the icon set the Simform design
+system names, and its ISC licence needs only the notice (shipped as `icon-packs/generic/TERMS-LICENSE`
+and in THIRD_PARTY_NOTICES.md).
+**Differences from the Microsoft packs:** generic icons are recoloured, deliberately. They are drawn
+with `stroke="currentColor"` in the node type's own stroke colour on a tile that follows the theme
+(`.brand-mark-line` in `viewer/viewer.css`), so they keep contrast in dark mode. Stroke is 1.75 in a
+24-unit glyph, drawn at native size (24px) inside the 48px gutter tile. The Microsoft artwork is
+still never altered.
+**Caveats:** inference reads English words only; a node labelled in another language falls back to
+its type icon. The keyword rules are a heuristic, so a surprising pick is fixed by setting `brand`.
+Only architecture diagrams infer icons; other types accept an explicit generic `brand` but never
+get one automatically. Icon choice was not reviewed by a designer.
+**How to reverse:** delete the `generic` entry from `PACKS` in `sync-icon-packs.mjs`, run the sync
+(or remove `icon-packs/generic/` and the catalogue entries), delete `generic-icons.mjs` and its call
+in `brand-marks.mjs`. Setting `SIMFORM_GENERIC_ICONS=off` turns off only the automatic part.
+
+## D-20 The skill asks which Azure architecture style to draw, defaulting to Microsoft's Microservices
+
+**Decided:** before drawing an `architecture` diagram from a system description or a codebase, the
+skill (`SKILL.md`, native diagram authoring step 1) asks once which style to follow, using the six
+styles on the Azure Architecture Center's architecture styles guide: Microservices (default),
+N-tier, Web-queue-worker, Event-driven, Big data, Big compute. A seventh option, "work it out from
+the codebase", has the agent read the repository and choose the best style or a combination, and
+say so before drawing. Details, the evidence table and the drawing shape per style are in
+`archify/references/architecture-styles.md`. `examples/microservices-platform.architecture.json`
+shows the default style with Azure and generic icons together.
+**Why:** end users asked to be asked, with Microservices as the default and an option for the agent
+to decide from the code.
+**Caveats:** this is skill instruction, not code: whether the question is asked depends on the
+agent following `SKILL.md`, and nothing in the CLI enforces or records the choice (it is written to
+`meta.subtitle` by convention only). The six styles come from one reading of the guide (2026-11-04);
+Microsoft may add or rename styles. The per-style drawing shapes are a house summary, not Microsoft's
+diagrams. It was not tried with a real agent end to end.
+**How to reverse:** delete the sentence in `SKILL.md` step 1 and `references/architecture-styles.md`.
+
+## D-21 Viewer polish: sentence-case labels, no looping chrome, quiet legend counts
+
+**Decided:** a polish pass on the standalone page, following the `unslop` and `modern-web-guidance`
+skills but keeping the Simform brand (palette, Inter, light default) untouched. Changes in
+`viewer/viewer.css` and `archify/locales/en.json`:
+- Dock and level labels read `Route`, `Map`, `Lens`, `Read`, `Full`, `Auto` (were all caps).
+- Twelve small-caps eyebrow and status labels (lens, passport, finder, guide, overview map) lose
+  uppercase, wide tracking and 800 weight, and rise from 8px to 11px.
+- The title dot, overview-map dot and motion button no longer pulse or breathe forever. Flow
+  animation along edges, which explains direction, is unchanged.
+- Legend counts are plain numbers instead of bordered pills. The keyboard focus ring on a legend
+  entry is a thicker stroke, not a glow.
+**Why:** end users said the page looked machine-made. Uppercase tracked micro-labels, endless
+pulsing and counts in pills are the common tells.
+**Not changed, and why:** the dotted canvas (the design system's network motif), the 700-weight
+title (the design system sets h1 at 700), the glass-blur dock, the corner node-type glyph (it keeps
+type from relying on colour alone, WCAG 1.4.1), and the other locales' strings (not reviewed).
+Diagram text inside nodes is still small at fit-to-screen zoom.
+**Caveats:** checked by screenshot in light and dark and by the test suites, not by a designer or
+with real users. The in-page copy and spacing of the lens, passport and finder panels were not
+audited line by line.
+**How to reverse:** revert the CSS and locale edits in this entry's commit and run
+`node scripts/generate-viewer.mjs`.
+
+## D-22 More built-in brand marks, drawn in the 48px gutter in architecture diagrams
+
+**Decided:** eleven marks join the built-in catalogue (107 to 118): `qdrant`, `milvus`, `neo4j`,
+`langchain`, `langgraph`, `crewai`, `nginx`, `graphql`, `celery` (from Simple Icons 16.28.0, as the
+existing marks are), plus `llamaindex` (single-colour path from lobe-icons, MIT) and `agno` (the
+symbol from Agno's own logo file, translated into a square viewBox). PostgreSQL, Redis, MongoDB,
+React, Python and TypeScript were already there. Built-in and digest-pinned captured marks now use
+the same 48px left-gutter layout as the Azure icons in **architecture** diagrams; other diagram types
+are unchanged (16px corner badge). A node too narrow for the gutter and its label keeps the small
+badge instead of failing validation, so diagrams written earlier still render. Two generic icons were
+added (`generic-agent`, `generic-vector-database`), and `microsoft agent framework` is an alias of
+`generic-agent`.
+**Why:** end users asked for icons for common services and frameworks. Most already existed, but at
+16px beside 48px Azure icons they looked like an afterthought, which was the original complaint.
+**Caveats:** Microsoft Agent Framework has no logo I could find (no vector in its repository or on
+its docs), so it shows a generic robot glyph, not a Microsoft mark; if Microsoft publishes one, add it
+to the Microsoft packs. The Agno symbol was cut from its wordmark by reading path coordinates, not
+from a published standalone icon, and was not checked against Agno's brand guidelines. The LlamaIndex
+mark comes from a third-party icon set, not LlamaIndex's own files (their favicon is a raster
+image). Single-colour marks are drawn in their recorded colour on a white tile (LlamaIndex and Agno in
+black). Simple Icons' CC0 licence covers its collection, not every trademark.
+**How to reverse:** remove the eleven entries from `archify/brand-marks/catalog.json` and run
+`npm --prefix archify run generate:brand-marks`; delete the `placement` additions in
+`brand-marks.mjs` (`attachPackMark` stays) to return built-in marks to the 16px badge.
+
+## D-23 Upstream's website, proof gallery and Pages/Cloudflare deploys are removed
+
+**Decided:** deleted `docs/index.html`, `docs/guide.html`, `docs/start.html`, `docs/gallery.html`,
+`docs/gallery/` (its rendered artifacts, sources and manifest), `docs/llms.txt`, the whole `website/`
+Astro project, the generators and templates behind them (`scripts/build-gallery.mjs`,
+`build-guide.mjs`, `build-start.mjs`, `copy-site-assets.mjs`, `site-copy.mjs`, `gallery-template.html`,
+`guide-template.html`, `start-template.html`), the README demo GIF build (`scripts/build-readme-showcase.mjs`,
+`docs/assets/archify-live-proof.*`), the `website`, `deploy-pages` and `deploy-cloudflare` jobs in
+`.github/workflows/ci.yml`, and the tests that only covered those (gallery, guide, start, landing, site
+language, copy-site-assets, cloudflare, proof-aperture, README showcase). Shared tests and
+`scripts/check-release-identity.mjs` lost their site assertions; `test/golden.mjs` no longer checks the
+landing page version. The root `llms.txt` stays.
+**Why:** Simform does not use upstream's marketing site, and keeping it meant regenerating several
+hundred KB of pages and artifacts on every viewer or renderer change.
+**Caveats:** `docs/` still holds upstream's other prose, evidence and case files, the `docs/assets`
+images the translated READMEs use, and `docs/skill-updates/` (the update manifest). `README_ZH.md`,
+`README_JA.md` and `README_KO.md` may link to pages that no longer exist. `scripts/ci-scope.mjs` still
+classifies paths for a `website` scope that no job consumes. `.github/workflows/` contributor-card and
+star-history workflows and the `community/`, `benchmarks/`, `experiments/` and `tools/` folders are
+untouched. The release workflow was not checked for site steps. This removal was done by running the
+suite until it passed, not by tracing every reference, so stray mentions in prose may remain.
+**How to reverse:** `git revert` the commit that carries this entry (or restore the paths from the
+previous commit); nothing else depended on them.
+
+## D-24 Upstream-only docs, evidence, benchmarks, community and integrations are removed
+
+**Decided:** deleted the narrative and marketing material (`docs/article-*` and images, `docs/assets`,
+`experiments/`, `journal/`, `docs/research`, `docs/reviews`, the acceptance and design notes in `docs/`,
+`ROADMAP.md`, and `README_ZH.md`, `README_JA.md`, `README_KO.md`); the evidence and case studies
+(`docs/cases`, `docs/evidence`, `docs/reading-evidence`, `docs/issue-52-visual-evidence`, `docs/specs`
+except `docs/specs/explainer/examples`, `benchmarks/`, `community/`); and the other-agent integrations
+and automation (`integrations/`, `tools/`, the contributor-cards, contributors, star-history and DSH
+workflows, and the scripts and tests that served them). The upstream showcase issue template went too.
+Tests that only covered these were deleted; shared tests and `scripts/check-release-identity.mjs` lost
+their translated-README, roadmap and integration assertions.
+**Why:** Simform uses none of it, and each upstream README, benchmark and case study is something
+a reviewer would otherwise have to keep current.
+**Kept on purpose:** `docs/simform/`, the authoring cookbooks, `docs/releases`, `docs/skill-updates`,
+`CHANGELOG.md`, `PRODUCT.md`, `DESIGN.md`, the root `examples/` (goldens used by tests) and
+`docs/specs/explainer/examples` (fixtures for the explainer layout test).
+**Caveats:** the DeepSeek and Hermes adapters are gone, so the skill is no longer shipped for those
+agents from this repository; `test/path-boundary-contract.test.mjs` may still list `integrations/` paths;
+`scripts/ci-scope.mjs` still has classification rules for removed paths. `CHANGELOG.md` and a few
+prose mentions still name the removed material. Done by running the suite until it passed, so stray
+references may remain.
+**How to reverse:** `git revert` the commit that carries this entry.

@@ -128,7 +128,7 @@ function nodeBlock(html, id) {
 }
 
 test('generated catalog exposes a substantial, unique, provenance-backed preset library', () => {
-  assert.equal(BRAND_MARKS.length, 107);
+  assert.equal(BRAND_MARKS.length, 118);
   assert.equal(new Set(BRAND_MARKS.map((mark) => mark.id)).size, BRAND_MARKS.length);
   for (const mark of BRAND_MARKS) {
     assert.match(mark.id, /^[a-z0-9]+(?:-[a-z0-9]+)*$/);
@@ -162,6 +162,8 @@ test('all five renderers keep the semantic sigil and add one export-safe brand b
   for (const type of Object.keys(cases)) {
     const input = writeFixture(type, `preset-${type}`, 'openai', (_diagram, node) => {
       if (type === 'lifecycle') Object.assign(node, { step: node.step || '01', icon: 'start' });
+      // Wide enough for the 48px gutter layout; narrower nodes keep the 16px badge.
+      if (type === 'architecture') node.size = [190, 60];
     });
     const { result, html } = renderSync(type, input, `preset-${type}`);
     assert.equal(result.status, 0, `${type}: ${result.stderr || result.stdout}`);
@@ -181,9 +183,16 @@ test('all five renderers keep the semantic sigil and add one export-safe brand b
     const [frameX, frameY, frameWidth] = frame.slice(1, 4).map(Number);
     const [, semanticY] = semantic.slice(1, 3).map(Number);
     const [brandX, brandY, brandWidth, brandHeight, brandRadius] = brand.slice(1, 6).map(Number);
+    assert.equal(brandRadius, 4, `${type}: brand badge radius`);
+    if (type === 'architecture') {
+      // Architecture marks sit in a 48px left gutter, vertically centred (D-09, D-22).
+      assert.equal(brandWidth, 48, `${type}: brand badge width`);
+      assert.equal(brandHeight, 48, `${type}: brand badge height`);
+      assert.equal(brandX - frameX, 12, `${type}: brand badge left inset`);
+      continue;
+    }
     assert.equal(brandWidth, 16, `${type}: brand badge width`);
     assert.equal(brandHeight, 16, `${type}: brand badge height`);
-    assert.equal(brandRadius, 4, `${type}: brand badge radius`);
     assert.equal(brandY - frameY, 6, `${type}: brand badge top inset`);
     assert.equal(frameX + frameWidth - (brandX + brandWidth), 6, `${type}: brand badge right inset`);
     assert.equal(brandY, semanticY, `${type}: brand and semantic marks share a top rail`);

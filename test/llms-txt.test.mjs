@@ -12,18 +12,11 @@ function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
-function switcherAgents() {
-  const start = read('docs/start.html');
-  const known = start.match(/KNOWN_AGENTS = new Set\(\[([^\]]+)\]\)/);
-  assert.ok(known, 'start page must name its switcher agents');
-  return [...known[1].matchAll(/'([^']+)'/g)].map((match) => match[1]);
-}
+const agents = ['cursor', 'codex', 'claude-code', 'opencode', 'github-copilot'];
 
 test('llms.txt states the package version and the bounded install', () => {
   const version = JSON.parse(read('archify/package.json')).version;
   const root = read('llms.txt');
-  const site = read('docs/llms.txt');
-  assert.equal(site, root);
   assert.match(root, new RegExp(`^Version: ${version.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'm'));
   assert.match(root, /https:\/\/github\.com\/SimformSolutionsPvtLtd\/simform-archify/);
   assert.match(root, /https:\/\/github\.com\/tt-a1i\/archify/);
@@ -37,6 +30,6 @@ test('llms.txt states the package version and the bounded install', () => {
   assert.match(root, new RegExp(doctor.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   assert.match(root, /ten diagram types/i);
   assert.match(root, /one-page explainer/i);
-  for (const agent of switcherAgents()) assert.match(root, new RegExp(`\\b${agent}\\b`));
+  for (const agent of agents) assert.match(root, new RegExp(`\\b${agent}\\b`));
   assert.ok(root.length < 4000, 'llms.txt should stay a bounded agent brief');
 });

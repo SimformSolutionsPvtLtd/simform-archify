@@ -11,6 +11,25 @@ replace the copyright licenses, trademark policies, or brand guidelines that
 apply to third-party marks. Users are responsible for confirming that their
 particular use is permitted.
 
+## Lucide
+
+The `generic` icon pack in `archify/icon-packs/generic/` is line art copied
+unchanged from [lucide-static 1.75.0](https://www.npmjs.com/package/lucide-static/v/1.75.0)
+and used for components that are not Microsoft services. Lucide is licensed
+under the ISC License, Copyright (c) 2026 Lucide Icons and Contributors; a few
+glyphs derive from the Feather project (MIT). The full licence text ships as
+`archify/icon-packs/generic/TERMS-LICENSE`.
+
+## LlamaIndex and Agno marks
+
+The built-in `llamaindex` mark is the single-colour glyph from
+[lobe-icons](https://github.com/lobehub/lobe-icons) (`@lobehub/icons-static-svg`
+1.103.0, MIT License, Copyright (c) LobeHub). The built-in `agno` mark is the
+symbol taken from Agno's own logo file linked in the README of
+[agno-agi/agno](https://github.com/agno-agi/agno), translated into a square
+viewBox with no other change. Both are trademarks of their owners, shown only to
+identify the technology in a diagram, with no implied endorsement.
+
 ## Simple Icons
 
 Most of the built-in vector paths and their metadata were generated from

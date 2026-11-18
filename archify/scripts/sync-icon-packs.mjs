@@ -6,12 +6,17 @@
 //       five archives, extract them and rewrite icon-packs/.
 //   node scripts/sync-icon-packs.mjs --from-archives DIR
 //       Same, using azure.zip, m365.zip, entra.zip, fabric.zip, d365.zip in DIR.
+//   node scripts/sync-icon-packs.mjs --download --only generic
+//       Refresh only the named pack(s); the other packs and their catalogue
+//       entries are kept as they are (no Microsoft download).
 //   node scripts/sync-icon-packs.mjs --check
 //       Verify icon-packs/catalog.json against the files on disk (digests,
 //       sanitiser, unique ids, alias targets). No network.
 //
 // Curated SVGs are copied byte-for-byte. Microsoft's terms forbid altering icon
-// artwork, so nothing here recolours, crops or rewrites shapes.
+// artwork, so nothing here recolours, crops or rewrites shapes. The `generic`
+// pack is different: it is Lucide (ISC licence) line art for components that are
+// not Microsoft services, drawn in the node's own colour at render time.
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
@@ -28,6 +33,7 @@ const SOURCES_FILE = path.join(ICON_PACKS_ROOT, 'SOURCES.md');
 const ARCHIVE_ALLOWED_HOSTS = new Set([
   'learn.microsoft.com', 'arch-center.azureedge.net', 'download.microsoft.com',
   'go.microsoft.com', 'github.com', 'raw.githubusercontent.com',
+  'registry.npmjs.org',
 ]);
 
 const PACKS = {
@@ -72,6 +78,17 @@ const PACKS = {
     license: 'Microsoft public-use icon licence shipped with the archive (CELA_Licenses_Public_Use_Icons.pdf).',
     terms: [/CELA_Licenses_Public_Use_Icons\.pdf$/],
   },
+};
+
+const LUCIDE_VERSION = '1.75.0';
+
+PACKS.generic = {
+  title: 'Generic system icons (Lucide)',
+  page: 'https://lucide.dev/',
+  tarball: true,
+  fallback: `https://registry.npmjs.org/lucide-static/-/lucide-static-${LUCIDE_VERSION}.tgz`,
+  license: 'ISC (Lucide Icons and Contributors); a few glyphs derive from Feather (MIT). Line art, drawn in the node colour.',
+  terms: [/package\/LICENSE$/],
 };
 
 const M365_FAMILIES = [
@@ -192,8 +209,74 @@ function d365Candidates(root, files) {
   return candidates;
 }
 
+
+// [id, Lucide file, title, category, aliases]. These stand for components that
+// are not Microsoft services (the Azure packs cover those). Aliases are what an
+// author or agent is likely to type; the renderer also infers an icon from a
+// node's label and type (renderers/shared/generic-icons.mjs).
+const GENERIC_ICONS = [
+  ['generic-user', 'user', 'User', 'people', ['user', 'end user', 'person', 'customer', 'actor']],
+  ['generic-users', 'users', 'Users', 'people', ['users', 'end users', 'customers', 'people', 'team']],
+  ['generic-admin', 'user-cog', 'Administrator', 'people', ['admin', 'administrator', 'operator', 'back office user']],
+  ['generic-browser', 'app-window', 'Browser', 'clients', ['browser', 'web browser', 'web client', 'single page app', 'spa', 'web ui', 'frontend']],
+  ['generic-mobile-app', 'smartphone', 'Mobile app', 'clients', ['mobile', 'mobile app', 'phone', 'ios app', 'android app']],
+  ['generic-desktop-app', 'monitor', 'Desktop app', 'clients', ['desktop', 'desktop app', 'workstation', 'thick client']],
+  ['generic-dashboard', 'layout-dashboard', 'Dashboard', 'clients', ['dashboard', 'admin dashboard', 'admin portal', 'back office']],
+  ['generic-api-server', 'server', 'API server', 'compute', ['api server', 'api', 'rest api', 'backend api', 'app server', 'application server', 'server', 'web server']],
+  ['generic-microservice', 'box', 'Microservice', 'compute', ['microservice', 'service', 'internal service', 'backend service']],
+  ['generic-worker', 'cog', 'Worker', 'compute', ['worker', 'background worker', 'job worker', 'consumer', 'processor']],
+  ['generic-scheduler', 'calendar-clock', 'Scheduler', 'compute', ['scheduler', 'cron', 'timer', 'scheduled job', 'cron job']],
+  ['generic-batch-job', 'layers', 'Batch job', 'compute', ['batch', 'batch job', 'batch processing']],
+  ['generic-container', 'container', 'Container', 'compute', ['container', 'docker container']],
+  ['generic-serverless-function', 'zap', 'Serverless function', 'compute', ['serverless function', 'serverless']],
+  ['generic-gateway', 'waypoints', 'API gateway', 'networking', ['api gateway', 'gateway', 'reverse proxy', 'proxy', 'ingress']],
+  ['generic-load-balancer', 'split', 'Load balancer', 'networking', ['load balancer', 'balancer']],
+  ['generic-network', 'network', 'Network', 'networking', ['network', 'private network', 'lan']],
+  ['generic-internet', 'globe', 'Internet', 'networking', ['internet', 'public internet', 'web']],
+  ['generic-database', 'database', 'Database', 'data', ['database', 'db', 'relational database', 'data store', 'datastore']],
+  ['generic-cache', 'database-zap', 'Cache', 'data', ['cache', 'in-memory cache']],
+  ['generic-object-storage', 'archive', 'Object storage', 'data', ['object storage', 'bucket']],
+  ['generic-file-storage', 'folder', 'File storage', 'data', ['file storage', 'file share', 'filesystem']],
+  ['generic-data-warehouse', 'table-2', 'Data warehouse', 'data', ['data warehouse', 'warehouse', 'olap']],
+  ['generic-data-lake', 'waves', 'Data lake', 'data', ['data lake']],
+  ['generic-search-index', 'search', 'Search index', 'data', ['search', 'search index', 'search engine', 'full-text search']],
+  ['generic-queue', 'list-end', 'Queue', 'messaging', ['queue', 'message queue', 'job queue', 'task queue', 'work queue']],
+  ['generic-event-bus', 'radio', 'Event bus', 'messaging', ['event bus', 'event broker', 'pub/sub', 'pubsub', 'topic', 'message broker', 'broker']],
+  ['generic-event-stream', 'activity', 'Event stream', 'messaging', ['event stream', 'stream', 'streaming', 'event log']],
+  ['generic-webhook', 'webhook', 'Webhook', 'messaging', ['webhook', 'callback']],
+  ['generic-email', 'mail', 'Email', 'messaging', ['email', 'smtp', 'mail service', 'email service']],
+  ['generic-notification', 'bell', 'Notifications', 'messaging', ['notification', 'notifications', 'push notification', 'alerts']],
+  ['generic-chat', 'message-square', 'Messaging', 'messaging', ['sms', 'chat', 'messaging']],
+  ['generic-identity-provider', 'key-round', 'Identity provider', 'security', ['identity provider', 'idp', 'sso', 'single sign-on', 'auth', 'authentication', 'oauth', 'login']],
+  ['generic-secrets', 'lock-keyhole', 'Secrets', 'security', ['secrets', 'secret store', 'vault', 'key store', 'secrets manager', 'kms']],
+  ['generic-firewall', 'brick-wall', 'Firewall', 'security', ['firewall', 'waf']],
+  ['generic-security', 'shield-check', 'Security', 'security', ['security', 'access control', 'authorization', 'rbac', 'policy']],
+  ['generic-monitoring', 'gauge', 'Monitoring', 'operations', ['monitoring', 'metrics', 'observability', 'apm']],
+  ['generic-logging', 'scroll-text', 'Logging', 'operations', ['logging', 'logs', 'log aggregation', 'audit log']],
+  ['generic-ci-cd', 'git-branch', 'CI/CD', 'operations', ['ci/cd', 'cicd', 'build pipeline', 'deploy pipeline']],
+  ['generic-configuration', 'sliders-horizontal', 'Configuration', 'operations', ['configuration', 'config', 'feature flags', 'settings']],
+  ['generic-payments', 'credit-card', 'Payments', 'business', ['payments', 'payment gateway', 'billing', 'checkout']],
+  ['generic-analytics', 'chart-column', 'Analytics', 'business', ['analytics', 'reporting', 'business intelligence']],
+  ['generic-agent', 'bot', 'AI agent', 'business', ['ai agent', 'agent', 'agents', 'agent framework', 'microsoft agent framework', 'copilot agent']],
+  ['generic-vector-database', 'database-search', 'Vector database', 'data', ['vector database', 'vector db', 'vector store', 'embeddings store']],
+  ['generic-ml-model', 'brain-circuit', 'ML model', 'business', ['ml model', 'machine learning', 'ai model', 'inference', 'llm']],
+  ['generic-etl', 'shuffle', 'ETL', 'business', ['etl', 'data pipeline', 'data integration', 'ingestion']],
+  ['generic-iot-device', 'cpu', 'IoT device', 'business', ['iot device', 'device', 'sensor', 'edge device', 'iot']],
+  ['generic-external-api', 'plug', 'External API', 'business', ['external api', 'third-party api', 'third party', 'partner api', 'integration', 'external system']],
+  ['generic-cloud-service', 'cloud', 'Cloud service', 'business', ['cloud service', 'saas']],
+];
+
+function genericCandidates(root, files) {
+  return GENERIC_ICONS.map(([id, lucide, title, category, pinned]) => {
+    const file = files.find((candidate) => toPosix(candidate).endsWith(`/package/icons/${lucide}.svg`));
+    if (!file) throw new Error(`lucide-static ${LUCIDE_VERSION} has no icons/${lucide}.svg`);
+    return { id, title, category, pinned, file, origin: `lucide-static/icons/${lucide}.svg` };
+  });
+}
+
 const SELECTORS = {
   azure: azureCandidates, m365: m365Candidates, entra: entraCandidates, fabric: fabricCandidates, d365: d365Candidates,
+  generic: genericCandidates,
 };
 
 // ---------------------------------------------------------------- sync
@@ -264,6 +347,7 @@ async function fetchBuffer(url) {
 
 async function resolveDownloadUrl(pack) {
   const definition = PACKS[pack];
+  if (!definition.linkPattern) return definition.fallback;
   try {
     const page = (await fetchBuffer(definition.page)).toString('utf8');
     const match = page.match(definition.linkPattern);
@@ -280,11 +364,35 @@ function extract(zipFile, destination) {
   execFileSync('unzip', ['-q', '-o', zipFile, '-d', destination], { stdio: 'inherit' });
 }
 
+function extractTarball(file, destination) {
+  fs.mkdirSync(destination, { recursive: true });
+  execFileSync('tar', ['-xzf', file, '-C', destination, 'package/icons', 'package/LICENSE'], { stdio: 'inherit' });
+}
+
+function readExistingCatalog() {
+  try {
+    return JSON.parse(fs.readFileSync(ICON_CATALOG_FILE, 'utf8'));
+  } catch (error) {
+    if (error?.code === 'ENOENT') return { packs: {}, icons: [] };
+    throw error;
+  }
+}
+
 function writeOutputs(results, archives) {
   const manual = loadManualAliases();
+  const existing = readExistingCatalog();
   const ids = new Set();
   const catalogIcons = [];
-  for (const [pack, result] of Object.entries(results)) {
+  // Packs that were not refreshed (--only) keep their catalogue entries as they are.
+  for (const pack of Object.keys(PACKS)) {
+    const result = results[pack];
+    if (!result) {
+      for (const icon of existing.icons.filter((entry) => entry.pack === pack)) {
+        ids.add(icon.id);
+        catalogIcons.push(icon);
+      }
+      continue;
+    }
     fs.rmSync(path.join(ICON_PACKS_ROOT, pack), { recursive: true, force: true });
     for (const icon of result.kept) {
       if (ids.has(icon.id)) throw new Error(`Duplicate icon id across packs: ${icon.id}`);
@@ -293,18 +401,20 @@ function writeOutputs(results, archives) {
       const target = path.join(ICON_PACKS_ROOT, relative);
       fs.mkdirSync(path.dirname(target), { recursive: true });
       fs.writeFileSync(target, icon.bytes);
-      catalogIcons.push({
+      const entry = {
         id: icon.id,
         title: icon.title,
         pack,
         category: icon.category,
-        pinned: [],
+        pinned: manual[icon.id] || icon.pinned || [],
         aliases: [],
         file: relative,
         sha256: icon.sha256,
         viewBox: icon.viewBox,
         origin: icon.origin,
-      });
+      };
+      entry.aliases = [...new Set([...entry.pinned, ...autoAliases(entry)])];
+      catalogIcons.push(entry);
     }
     // Ship the terms that came with the archive, unmodified.
     const termsDir = path.join(ICON_PACKS_ROOT, pack);
@@ -315,18 +425,14 @@ function writeOutputs(results, archives) {
   for (const key of Object.keys(manual)) {
     if (!ids.has(key)) throw new Error(`aliases.json names unknown icon id "${key}"`);
   }
-  for (const icon of catalogIcons) {
-    icon.pinned = manual[icon.id] || [];
-    icon.aliases = [...new Set([...icon.pinned, ...autoAliases(icon)])];
-  }
   const header = {
     schemaVersion: 1,
-    packs: Object.fromEntries(Object.entries(PACKS).map(([name, definition]) => [name, {
+    packs: Object.fromEntries(Object.entries(PACKS).map(([name, definition]) => [name, results[name] ? {
       title: definition.title,
       page: definition.page,
       license: definition.license,
       archive: archives[name],
-    }])),
+    } : existing.packs[name]])),
   };
   const lines = catalogIcons.map((icon) => `    ${JSON.stringify(icon)}`).join(',\n');
   const headerJson = JSON.stringify(header, null, 2).replace(/\n}$/, '');
@@ -336,12 +442,19 @@ function writeOutputs(results, archives) {
 }
 
 function renderSources(results, archives, icons) {
+  // Rows and exclusion lines of packs that were not refreshed are carried over verbatim.
+  let previous = '';
+  try { previous = fs.readFileSync(SOURCES_FILE, 'utf8'); } catch (error) { if (error?.code !== 'ENOENT') throw error; }
+  const previousLines = previous.split('\n');
   const rows = Object.entries(PACKS).map(([name, definition]) => {
     const result = results[name];
+    if (!result) return previousLines.find((line) => line.startsWith(`| \`${name}\` |`));
     const archive = archives[name];
     return `| \`${name}\` | [${definition.title}](${definition.page}) | \`${archive.url}\` | \`${archive.sha256.slice(0, 16)}…\` | ${result.kept.length} of ${result.candidates} | ${definition.license} |`;
-  });
-  const dropped = Object.entries(results).flatMap(([name, result]) => result.dropped.map((line) => `- \`${name}\` ${line}`));
+  }).filter(Boolean);
+  const dropped = Object.keys(PACKS).flatMap((name) => (results[name]
+    ? results[name].dropped.map((line) => `- \`${name}\` ${line}`)
+    : previousLines.filter((line) => line.startsWith(`- \`${name}\` `))));
   return `# Icon pack sources
 
 Generated by \`scripts/sync-icon-packs.mjs\`. Do not edit by hand.
@@ -355,11 +468,15 @@ originals; \`catalog.json\` records each file's digest and original path.
 
 ## Using the icons correctly
 
-- Use icons only to illustrate Azure and Microsoft products in architecture
-  diagrams, training material or documentation.
-- Keep the product name next to the icon (use the service name as the node label).
-- Do not crop, flip, rotate, distort or recolour an icon, and do not use a
-  Microsoft icon to represent your own product or service.
+- The \`azure\`, \`m365\`, \`entra\`, \`fabric\` and \`d365\` packs may illustrate
+  Azure and Microsoft products in architecture diagrams, training material or
+  documentation. Keep the product name next to the icon (use the service name
+  as the node label).
+- Do not crop, flip, rotate, distort or recolour a Microsoft icon, and do not use
+  one to represent your own product or service.
+- The \`generic\` pack is Lucide line art (ISC licence) for components that are
+  not Microsoft services: users, API servers, queues, caches and so on. It is
+  drawn in each node's own colour, so it is the one pack the renderer recolours.
 - The terms files shipped with each archive are copied next to the icons as
   \`TERMS-*\`.
 
@@ -411,7 +528,7 @@ async function main() {
   const archivesDir = value('--from-archives');
   const download = args.includes('--download');
   if (!download && !archivesDir) {
-    console.error('Usage: sync-icon-packs.mjs --download [--cache-dir DIR] | --from-archives DIR | --check');
+    console.error('Usage: sync-icon-packs.mjs --download [--only PACK[,PACK]] [--cache-dir DIR] | --from-archives DIR | --check');
     process.exit(2);
   }
   const cache = path.resolve(value('--cache-dir') || archivesDir || fs.mkdtempSync(path.join(os.tmpdir(), 'ms-icons-')));
@@ -420,9 +537,13 @@ async function main() {
   const results = {};
   const archives = {};
   try {
-    for (const name of Object.keys(PACKS)) {
-      const zip = path.join(cache, `${name}.zip`);
-      let url = `file:${name}.zip`;
+    const only = value('--only');
+    const names = only ? only.split(',').map((name) => name.trim()) : Object.keys(PACKS);
+    for (const name of names) if (!PACKS[name]) throw new Error(`Unknown pack "${name}"; choose from ${Object.keys(PACKS).join(', ')}`);
+    for (const name of names) {
+      const archiveName = `${name}.${PACKS[name].tarball ? 'tgz' : 'zip'}`;
+      const zip = path.join(cache, archiveName);
+      let url = `file:${archiveName}`;
       if (download) {
         url = await resolveDownloadUrl(name);
         console.log(`${name}: ${url}`);
@@ -432,7 +553,8 @@ async function main() {
       }
       archives[name] = { url, sha256: sha256(fs.readFileSync(zip)) };
       const target = path.join(work, name);
-      extract(zip, target);
+      if (PACKS[name].tarball) extractTarball(zip, target);
+      else extract(zip, target);
       results[name] = buildPack(name, target);
       results[name].termsFiles = walk(target).filter((file) => PACKS[name].terms.some((pattern) => pattern.test(toPosix(file))));
       console.log(`${name}: kept ${results[name].kept.length}/${results[name].candidates}, dropped ${results[name].dropped.length}`);

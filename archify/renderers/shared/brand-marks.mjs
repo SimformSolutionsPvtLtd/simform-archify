@@ -4,6 +4,7 @@ import http from 'node:http';
 import https from 'node:https';
 import net from 'node:net';
 import { BRAND_MARKS } from './generated-brand-marks.mjs';
+import { genericIconsEnabled, inferGenericIcon } from './generic-icons.mjs';
 import { findPackIcon, listPackIcons, loadPackIcon, packSourceUrl, suggestPackIcons } from './icon-packs.mjs';
 import { throwDiagnosticError } from './diagnostics.mjs';
 import { esc, textUnits } from './utils.mjs';
@@ -598,6 +599,75 @@ async function mapConcurrent(values, limit, visit) {
   await Promise.all(workers);
 }
 
+function attachPackMark(diagramType, index, node, packIcon) {
+  const scope = `ic${createHash('sha256').update(`${diagramType}\0${index}\0${node.id}\0${packIcon.id}`).digest('hex').slice(0, 8)}`;
+  const loaded = loadPackIcon(packIcon, scope);
+  const resolved = {
+    id: packIcon.id,
+    title: packIcon.title,
+    kind: 'pack',
+    placement: placementFor(diagramType),
+    pack: packIcon.pack,
+    status: 'pack',
+    sourceUrl: packSourceUrl(packIcon),
+    viewBox: loaded.viewBox,
+    markup: loaded.markup,
+    line: loaded.line,
+    nodeType: node.type,
+  };
+  node[RESOLVED_MARK] = resolved;
+  RESOLVED_BY_NODE.set(node, resolved);
+  return resolved;
+}
+
+// Built-in and captured marks use the larger gutter layout in architecture
+// diagrams, but diagrams written before that keep working: a node too narrow
+// for the gutter and a readable label keeps the small corner badge instead of
+// failing. Below GUTTER_MIN_WIDTH the label would have under ~100px beside the
+// 48px icon and fall under the desktop readability floor.
+const GUTTER_MIN_WIDTH = 190;
+function keepSmallBadgeWhenTooNarrow(nodes) {
+  for (const node of nodes) {
+    const mark = brandMarkFor(node);
+    if (!mark?.placement || mark.kind === 'pack') continue;
+    const width = Array.isArray(node.size) ? node.size[0] : null;
+    if (width && (width < GUTTER_MIN_WIDTH || brandTopRailProblem(node, width, 8))) {
+      const { placement, ...small } = mark;
+      node[RESOLVED_MARK] = small;
+      RESOLVED_BY_NODE.set(node, small);
+    }
+  }
+}
+
+// An architecture diagram that already shows Microsoft icons gives every other
+// node a generic icon too, so users, API servers and queues are not left bare.
+// A node too narrow for its label beside an icon keeps no icon rather than
+// failing validation for something the author never asked for.
+function inferGenericMarks(diagramType, nodes) {
+  if (diagramType !== 'architecture' || !genericIconsEnabled()) return;
+  const hasMicrosoftIcon = nodes.some((node) => {
+    const mark = brandMarkFor(node);
+    return mark?.kind === 'pack' && mark.pack !== 'generic';
+  });
+  if (!hasMicrosoftIcon) return;
+  nodes.forEach((node, index) => {
+    if (node.brand || brandMarkFor(node)) return;
+    const id = inferGenericIcon(node);
+    const icon = id && findPackIcon(id);
+    if (!icon || icon.pack !== 'generic') return;
+    try {
+      attachPackMark(diagramType, index, node, icon);
+    } catch {
+      return;
+    }
+    const width = Array.isArray(node.size) ? node.size[0] : null;
+    if (width && brandTopRailProblem(node, width, 8)) {
+      delete node[RESOLVED_MARK];
+      RESOLVED_BY_NODE.delete(node);
+    }
+  });
+}
+
 export async function prepareDiagramBrandMarks(diagramType, diagram) {
   const collection = COLLECTIONS[diagramType];
   const nodes = collection && Array.isArray(diagram[collection]) ? diagram[collection] : [];
@@ -617,35 +687,31 @@ export async function prepareDiagramBrandMarks(diagramType, diagram) {
         unknown.push(`/${collection}/${index}/brand digest changed: expected ${node.brand.sha256}, received ${resolved.sha256}`);
         return;
       }
-      node[RESOLVED_MARK] = resolved;
-      RESOLVED_BY_NODE.set(node, resolved);
+      // Architecture marks get the larger gutter layout too, so a PostgreSQL or
+      // Qdrant node is not a 16px badge beside 48px Azure icons (D-22). The
+      // capture is shared between nodes, so copy before adding placement.
+      const placed = diagramType === 'architecture' ? { ...resolved, placement: placementFor(diagramType) } : resolved;
+      node[RESOLVED_MARK] = placed;
+      RESOLVED_BY_NODE.set(node, placed);
       return;
     }
     const preset = findBrandMark(node.brand);
     if (preset) {
-      const resolved = { ...preset, kind: 'preset', status: 'preset', sourceUrl: preset.provenance.source };
+      const resolved = {
+        ...preset,
+        kind: 'preset',
+        status: 'preset',
+        sourceUrl: preset.provenance.source,
+        ...(diagramType === 'architecture' ? { placement: placementFor(diagramType) } : {}),
+      };
       node[RESOLVED_MARK] = resolved;
       RESOLVED_BY_NODE.set(node, resolved);
       return;
     }
     const packIcon = findPackIcon(node.brand);
     if (packIcon) {
-      const scope = `ic${createHash('sha256').update(`${diagramType}\0${index}\0${node.id}\0${packIcon.id}`).digest('hex').slice(0, 8)}`;
       try {
-        const loaded = loadPackIcon(packIcon, scope);
-        const resolved = {
-          id: packIcon.id,
-          title: packIcon.title,
-          kind: 'pack',
-          placement: placementFor(diagramType),
-          pack: packIcon.pack,
-          status: 'pack',
-          sourceUrl: packSourceUrl(packIcon),
-          viewBox: loaded.viewBox,
-          markup: loaded.markup,
-        };
-        node[RESOLVED_MARK] = resolved;
-        RESOLVED_BY_NODE.set(node, resolved);
+        attachPackMark(diagramType, index, node, packIcon);
       } catch (error) {
         unknown.push(`/${collection}/${index}/brand ${JSON.stringify(node.brand)} icon pack file is unusable: ${error.message}`);
       }
@@ -658,6 +724,10 @@ export async function prepareDiagramBrandMarks(diagramType, diagram) {
     }
     unknown.push(`/${collection}/${index}/brand ${JSON.stringify(node.brand)} is not a built-in brand; closest IDs: ${suggestions(node.brand).join(', ')}`);
   });
+  if (!unknown.length) {
+    keepSmallBadgeWhenTooNarrow(nodes);
+    inferGenericMarks(diagramType, nodes);
+  }
   if (unknown.length) {
     throwDiagnosticError(`Brand mark validation failed:\n- ${unknown.join('\n- ')}`, unknown.map((message) => ({
       code: message.includes('is an unpinned URL') ? 'brand/unpinned-url'
@@ -708,14 +778,14 @@ function packPlacement(mark) {
 }
 
 function markSize(mark) {
-  return mark?.kind === 'pack' ? packPlacement(mark).size : BRAND_MARK_SIZE;
+  return mark?.placement ? packPlacement(mark).size : BRAND_MARK_SIZE;
 }
 
 // Corner: the label is centred, so both sides keep the room the mark needs.
 // Left: the mark sits in a gutter and the label is left-aligned beside it.
 // Top: the mark is centred above the label, which keeps the full node width.
 function railReserve(mark) {
-  if (mark?.kind === 'pack') {
+  if (mark?.placement) {
     const { position, size } = packPlacement(mark);
     if (position === 'left') return size + 36;
     if (position === 'top') return 24;
@@ -754,12 +824,16 @@ export function renderBrandMark(node, { x, y, size = 16 } = {}) {
   if (!mark) return '';
   let inset = 3;
   let content;
-  if (mark.kind === 'pack') {
+  if (mark.placement) {
     // Callers position a 16px badge; keep its right edge and grow leftwards.
-    const packSize = packPlacement(mark).size;
-    x -= packSize - size;
-    size = packSize;
-    inset = Math.max(2, Math.round(size / 12));
+    const placedSize = packPlacement(mark).size;
+    x -= placedSize - size;
+    size = placedSize;
+    inset = Math.round(size * 0.22);
+  }
+  if (mark.kind === 'pack') {
+    // Line art (the generic pack) sits smaller in its tile than product art does.
+    inset = mark.line ? Math.round(size * (size >= 40 ? 0.25 : 0.18)) : Math.max(2, Math.round(size / 12));
     const inner = size - inset * 2;
     // Fit like preserveAspectRatio="xMidYMid meet": uniform scale, centred, never
     // cropped or distorted (Microsoft's terms forbid altering the artwork). A
@@ -779,7 +853,8 @@ export function renderBrandMark(node, { x, y, size = 16 } = {}) {
     const scale = size / 20;
     content = `<g transform="scale(${scale})" class="brand-mark-fallback"><circle cx="10" cy="10" r="5.2"/><path d="M4.8 10h10.4M10 4.8c1.6 1.6 2.4 3.3 2.4 5.2s-.8 3.6-2.4 5.2M10 4.8C8.4 6.4 7.6 8.1 7.6 10s.8 3.6 2.4 5.2"/></g>`;
   }
-  return `<g aria-hidden="true" ${markAttrs(mark)} class="brand-mark" transform="translate(${x} ${y})">
+  const markClass = mark.line ? `brand-mark brand-mark-line s-${esc(mark.nodeType || 'backend')}` : 'brand-mark';
+  return `<g aria-hidden="true" ${markAttrs(mark)} class="${markClass}" transform="translate(${x} ${y})">
             <rect width="${size}" height="${size}" rx="4" class="brand-mark-badge"/>
             ${content}
             <rect width="${size}" height="${size}" rx="4" class="brand-mark-frame"/>
@@ -791,7 +866,7 @@ export function renderBrandMark(node, { x, y, size = 16 } = {}) {
 // a renderer only swaps in coordinates: nothing here alters the artwork.
 export function brandPlacement(node, box) {
   const mark = brandMarkFor(node);
-  if (!mark || mark.kind !== 'pack') return null;
+  if (!mark || !mark.placement) return null;
   const { position, size } = packPlacement(mark);
   if (position === 'corner') return null;
   const hasSub = Boolean(node.sublabel);

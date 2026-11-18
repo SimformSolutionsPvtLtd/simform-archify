@@ -232,46 +232,20 @@ if (hasSupportedVersion) {
 
   const english = read('README.md');
   const englishMirror = read('README_EN.md');
-  const chinese = read('README_ZH.md');
-  const japanese = read('README_JA.md');
   checkReadme('README.md', english, version, 'en', isDevelopment);
   checkReadme('README_EN.md', englishMirror, version, 'en', isDevelopment);
-  checkReadme('README_ZH.md', chinese, version, 'zh', isDevelopment);
-  checkReadme('README_JA.md', japanese, version, 'ja', isDevelopment);
-  for (const [path, content] of [['README.md', english], ['README_EN.md', englishMirror], ['README_ZH.md', chinese], ['README_JA.md', japanese]]) {
+  for (const [path, content] of [['README.md', english], ['README_EN.md', englishMirror]]) {
     checkNoRavenSwitcher(path, content);
   }
   if (english !== englishMirror) fail('README_EN.md must remain byte-identical to README.md.');
 
   if (newestStableLabel && isDevelopment) {
     const stableMinor = newestStableLabel.split('.').slice(0, 2).join('\\.');
-    if (new RegExp(`Archify ${stableMinor} includes\\b`).test(english)
-      || new RegExp(`Archify ${stableMinor} 已覆盖`).test(chinese)) {
+    if (new RegExp(`Archify ${stableMinor} includes\\b`).test(english)) {
       fail(`README capability summary must describe v${version} as development, not published ${newestStableLabel}.`);
     }
   }
 
-  const landing = read('docs/index.html');
-  checkDocument('docs/index.html', landing, version, isDevelopment);
-  checkNoRavenSwitcher('docs/index.html', landing);
-  const proofCounts = [...landing.matchAll(/\b\d+\/\d+\b/g)].map((match) => match[0]);
-  const staleProofCounts = [...new Set(proofCounts.filter((count) => count !== '9/9'))];
-  if (proofCounts.length === 0 || staleProofCounts.length > 0) {
-    const found = staleProofCounts.length > 0 ? `; found ${staleProofCounts.join(', ')}` : '';
-    fail(`docs/index.html proof receipt must say 9/9 everywhere; every N/N proof receipt must be exactly 9/9${found}.`);
-  }
-  const start = read('docs/start.html');
-  checkDocument('docs/start.html', start, version, isDevelopment);
-  checkNoRavenSwitcher('docs/start.html', start);
-  checkRoadmap('ROADMAP.md', read('ROADMAP.md'), version, isDevelopment);
-
-  for (const templatePath of [
-    'scripts/start-template.html',
-    'scripts/guide-template.html',
-    'scripts/gallery-template.html',
-  ]) {
-    checkIdentityTemplate(templatePath, read(templatePath), isDevelopment);
-  }
 
   const changelogMarker = `Development identity: \`v${version}\``;
   if (hasRealUnreleasedChanges && !unreleased.includes(changelogMarker)) {
