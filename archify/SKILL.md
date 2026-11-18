@@ -1,13 +1,17 @@
 ---
-name: archify
-description: "Create validated architecture, workflow, sequence, data-flow, lifecycle/state, ERD, class, tree, timeline, and waterfall diagrams as explorable standalone HTML with dark/light themes, motion and image/SVG/WebM export. Accept requirements or Mermaid; inspect repository evidence for code-backed diagrams. Use when visualizing systems, API calls, pipelines, schemas, histories, timings, or everyday steps, parts, relationships and states. Also turn an answer into a one-page explainer, with the conclusion first, structured panels, native diagrams and charts, when the user asks for a page, an explainer or an answer to share (做成一页, 用页面讲), or proactively when the user's rules opt in with an [archify explainer: ...] line. Not for dashboards."
+name: simform-archify
+description: "Create Simform-branded, validated architecture, workflow, sequence, data-flow, lifecycle/state, ERD, class, tree, timeline and waterfall diagrams as explorable standalone HTML (Inter, Simform palette, light/dark, motion, image/SVG export) with official Azure, Microsoft 365, Entra, Fabric and Dynamics 365 service icons, ready to embed in SharePoint. Accept requirements or Mermaid; inspect repository evidence for code-backed diagrams. Use when visualizing Azure or cloud systems, API calls, pipelines, schemas, histories, timings or everyday steps and relationships. Also turn an answer into a one-page explainer, with the conclusion first, when the user asks for a page, an explainer or an answer to share. Not for dashboards."
 license: Apache-2.0
 metadata:
   version: "3.2"
   author: tt-a1i
+  maintainer: Simform
+  fork-of: https://github.com/tt-a1i/archify
 ---
 
-# Archify
+# Simform Archify
+
+Simform's fork of Archify: every diagram uses the Simform design system (Inter, lavender canvas, one red accent) and can carry official Azure icons.
 
 Create checked standalone HTML as a native diagram or a one-page explainer that answers a question.
 
@@ -83,6 +87,14 @@ Read Mermaid for topology and meaning, then author fresh Archify JSON; do not me
 - `stateDiagram` → `lifecycle`; states and transitions retain meaning, not Mermaid style.
 - `erDiagram` → `erd`; entity and relationship names, keys, and cardinality retain meaning, not Mermaid style.
 - `classDiagram` → `class`; type kinds, selected members, and relationship kinds retain meaning, not Mermaid style.
+
+## Simform: Azure icons and SharePoint
+
+- When the diagram names Azure or Microsoft services (Azure, Microsoft 365, Entra, Fabric, Dynamics 365), set `brand` on each service node to its official icon and label the node with the service name. Read [Azure icons](references/azure-icons.md) for lookup (`node bin/archify.mjs brands "<service>" --json`), sizing and the do-not-alter rules.
+- Architecture diagrams draw the icon at 48px in a left gutter, label beside it: size those nodes about `[210, 76]` or larger and leave 90px or more between columns. Other diagram types keep a 24px corner icon: size those nodes at least 160px wide. Never invent an icon: with no match, omit `brand`.
+- Word Azure connection labels like the Azure Architecture Center: lowercase, active verb first, one to three words (`routes traffic`, `persists data`, `sends messages`, `triggers worker`), no protocol names on edges. The vocabulary by relationship kind is in [Azure icons](references/azure-icons.md#connection-labels).
+- Colours, type and theme come from the Simform design system by default (light first). Leave `meta.visual_preset` unset, because the other presets are upstream looks, and do not hard-code colours.
+- For SharePoint, host the HTML on an HTTPS site and embed it with an iframe and `?present=1`. Read [SharePoint embed](references/sharepoint-embed.md) before advising on hosting or embedding.
 
 ## Delivery
 

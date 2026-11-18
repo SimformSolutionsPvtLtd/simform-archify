@@ -24,7 +24,7 @@ function metadata(content) {
   const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
   assert.ok(match, 'Skill must start with delimited YAML frontmatter');
   const data = parse(match[1]);
-  assert.equal(data.name, 'archify');
+  assert.equal(data.name, 'simform-archify');
   assert.equal(typeof data.description, 'string');
   assert.ok(data.description.trim());
   return data;
@@ -101,19 +101,19 @@ test('real Skills CLI keeps source and ZIP installs scoped to the requested Skil
         const result = invoke(sourcePath, flags);
         assert.equal(result.status, 0, result.output);
         assert.match(result.output, /Found 1 skill\b/);
-        assert.match(result.output, /Available Skills[\s\S]*\barchify\b/);
+        assert.match(result.output, /Available Skills[\s\S]*\bsimform-archify\b/);
         assert.doesNotMatch(result.output, /archify-review|archify-tuning|YAML parse error/);
         assert.deepEqual(installedNames(result.cwd), []);
       }
     });
     await t.test(`${label}: explicit and unfiltered --yes installs copy only archify`, () => {
-      for (const selection of [['--skill', 'archify'], [], ['--skill', '*']]) {
+      for (const selection of [['--skill', 'simform-archify'], [], ['--skill', '*']]) {
         const result = install(sourcePath, selection);
         assert.equal(result.status, 0, result.output);
-        assert.deepEqual(installedNames(result.cwd), ['archify']);
+        assert.deepEqual(installedNames(result.cwd), ['simform-archify']);
         const lock = JSON.parse(fs.readFileSync(path.join(result.cwd, 'skills-lock.json'), 'utf8'));
-        assert.deepEqual(Object.keys(lock.skills), ['archify']);
-        const installed = path.join(result.cwd, '.agents', 'skills', 'archify');
+        assert.deepEqual(Object.keys(lock.skills), ['simform-archify']);
+        const installed = path.join(result.cwd, '.agents', 'skills', 'simform-archify');
         metadata(fs.readFileSync(path.join(installed, 'SKILL.md'), 'utf8'));
         assert.equal(fs.lstatSync(installed).isSymbolicLink(), false);
         const doctor = spawnSync(process.execPath, [path.join(installed, 'bin', 'archify.mjs'), 'doctor'], {
@@ -134,7 +134,7 @@ test('real Skills CLI keeps source and ZIP installs scoped to the requested Skil
     const file = path.join(source, 'archify', 'SKILL.md');
     fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace(/^description:.*$/m,
       'description: steps and states: a plan'));
-    for (const selection of [['--skill', 'archify'], []]) {
+    for (const selection of [['--skill', 'simform-archify'], []]) {
       const result = install(source, selection);
       assert.equal(result.status, 1, result.output);
       assert.match(result.output, /YAML parse error/);

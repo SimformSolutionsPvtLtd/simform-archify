@@ -5,7 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const discovery = 'npx -y skills@latest add https://archify.si --list --full-depth';
+const discovery = 'npx -y skills@latest add SimformSolutionsPvtLtd/simform-archify --list --full-depth';
 const doctor = 'node <installed-path>/bin/archify.mjs doctor';
 
 function read(relativePath) {
@@ -25,12 +25,12 @@ test('llms.txt states the package version and the bounded install', () => {
   const site = read('docs/llms.txt');
   assert.equal(site, root);
   assert.match(root, new RegExp(`^Version: ${version.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'm'));
+  assert.match(root, /https:\/\/github\.com\/SimformSolutionsPvtLtd\/simform-archify/);
   assert.match(root, /https:\/\/github\.com\/tt-a1i\/archify/);
-  assert.match(root, /https:\/\/archify\.si/);
   assert.match(root, /confirm the scope before you install/i);
-  assert.match(root, /exactly one skill named `archify`/);
+  assert.match(root, /exactly one skill named `simform-archify`/);
   assert.match(root, new RegExp(discovery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-  assert.match(root, /--skill archify --agent <agent> --global --copy --yes/);
+  assert.match(root, /--skill simform-archify --agent <agent> --global --copy --yes/);
   assert.match(root, /unmanaged files/);
   assert.match(root, /Before either install command, inspect every selected agent destination/);
   assert.match(root, /stop and report the conflict before running the installer/);

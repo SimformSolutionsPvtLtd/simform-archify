@@ -16,26 +16,8 @@ const assetPath = path.join(repoRoot, 'docs', 'assets', 'archify-live-proof.gif'
 const receiptPath = path.join(repoRoot, 'docs', 'assets', 'archify-live-proof.json');
 
 const readmeLanguages = [
-  {
-    file: 'README.md',
-    href: './README.md',
-    label: 'English',
-    demos: '## See Archify in action',
-    preview: '## Preview',
-    quickStart: '## Quick start',
-    contributing: '## Contributing',
-    noRepository: /No repository is required/,
-  },
-  {
-    file: 'README_EN.md',
-    href: './README.md',
-    label: 'English',
-    demos: '## See Archify in action',
-    preview: '## Preview',
-    quickStart: '## Quick start',
-    contributing: '## Contributing',
-    noRepository: /No repository is required/,
-  },
+  // Simform fork: README.md / README_EN.md are the fork's own README (see DECISIONS.md D-14),
+  // so the upstream marketing structure below is asserted on the upstream translations only.
   {
     file: 'README_ZH.md',
     href: './README_ZH.md',

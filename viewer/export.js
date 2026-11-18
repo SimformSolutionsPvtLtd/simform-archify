@@ -359,7 +359,7 @@
 
           style.textContent =
             fontCss + "\n" +
-            "svg { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', 'Liberation Mono', 'Noto Sans Mono CJK SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', monospace; }\n" +
+            "svg { font-family: 'Inter', system-ui, -apple-system, 'SF Pro Text', 'Segoe UI', Roboto, 'Noto Sans CJK SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; }\n" +
             hostStyle + "\n" +
             ":root, svg { " + darkTheme.vars + " }\n" +
             "@media (prefers-color-scheme: light) { :root, svg { " + lightTheme.vars + " } }\n" +
@@ -388,7 +388,7 @@
           // Keep this order.
           style.textContent =
             fontCss + "\n" +
-            "svg { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', 'Liberation Mono', 'Noto Sans Mono CJK SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', monospace; }\n" +
+            "svg { font-family: 'Inter', system-ui, -apple-system, 'SF Pro Text', 'Segoe UI', Roboto, 'Noto Sans CJK SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; }\n" +
             hostStyle + "\n" +
             ":root, svg { " + vars + " }\n";
 
@@ -609,7 +609,7 @@
       function fitCanvasText(ctx, text, maxWidth, startSize, minSize, weight, fontFamily) {
         var value = String(text || '').trim();
         var size = startSize;
-        var family = fontFamily || "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
+        var family = fontFamily || "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
         while (size > minSize) {
           ctx.font = (weight || '600') + ' ' + size + 'px ' + family;
           if (ctx.measureText(value).width <= maxWidth) return value;
@@ -664,7 +664,7 @@
               var accentProperty = reachSnapshot
                 ? (reachSnapshot.direction === 'upstream' ? '--database-stroke' : '--backend-stroke')
                 : '--frontend-stroke';
-              var accent = computed.getPropertyValue(accentProperty).trim() || '#22d3ee';
+              var accent = computed.getPropertyValue(accentProperty).trim() || '#5b2a9e';
               var titleNode = document.querySelector('.header h1');
               var title = titleNode ? titleNode.textContent : document.title;
               var directionLabel = reachSnapshot
@@ -853,7 +853,7 @@
             var computed = getComputedStyle(element);
             return {
               points: samplesFor(element),
-              color: computed.stroke && computed.stroke !== 'none' ? computed.stroke : '#22d3ee',
+              color: computed.stroke && computed.stroke !== 'none' ? computed.stroke : '#5b2a9e',
               width: Math.max(1.5, parseFloat(computed.strokeWidth) || 1.5),
               delay: Math.min(12, authoredStep(element, index)) * 0.16
             };
@@ -869,7 +869,7 @@
               y: box.y,
               width: box.width,
               height: box.height,
-              color: computed.stroke && computed.stroke !== 'none' ? computed.stroke : '#22d3ee',
+              color: computed.stroke && computed.stroke !== 'none' ? computed.stroke : '#5b2a9e',
               delay: Math.min(12, authoredStep(element, index)) * 0.16
             };
           }).filter(Boolean);

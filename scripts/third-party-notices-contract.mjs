@@ -36,11 +36,11 @@ const REQUIRED_DISCLOSURES = [
 ];
 
 const FONT_DISCLOSURES = [
-  ['JetBrains Mono section', '## JetBrains Mono'],
-  ['JetBrains Mono source', 'https://github.com/JetBrains/JetBrainsMono'],
-  ['JetBrains Mono license', 'SIL Open Font License 1.1'],
-  ['JetBrains Mono license file', '`assets/JetBrainsMono-OFL.txt`'],
-  ['embedded-font treatment', 'embed the JetBrains Mono variable font\nsubsets served by Google Fonts'],
+  ['Inter section', '## Inter'],
+  ['Inter source', 'https://github.com/rsms/inter'],
+  ['Inter license', 'SIL Open Font License 1.1'],
+  ['Inter license file', '`assets/Inter-OFL.txt`'],
+  ['embedded-font treatment', 'embed the Inter variable font\nsubsets distributed by Fontsource'],
 ];
 
 export function validateThirdPartyNotices(content, { embeddedFonts = true } = {}) {

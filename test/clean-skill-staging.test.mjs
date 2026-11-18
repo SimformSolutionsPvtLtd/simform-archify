@@ -729,24 +729,24 @@ for (const fontPath of [null, 'archify/assets/template.html', 'archify/examples/
     const root = repositoryFixture();
     const destination = path.join(root, 'staged-skill');
     try {
-      const legacy = canonicalNotices.replace(/## JetBrains Mono[\s\S]*?(?=\n## |$)/, '');
+      const legacy = canonicalNotices.replace(/## Inter[\s\S]*?(?=\n## |$)/, '');
       write(root, 'THIRD_PARTY_NOTICES.md', legacy);
       write(root, 'archify/THIRD_PARTY_NOTICES.md', legacy);
       write(root, 'archify/assets/template.html', '<html>legacy viewer</html>');
       if (embedded) write(root, fontPath, '@font-face { src: url(data:font/woff2;base64,fixture); }');
-      write(root, 'archify/assets/JetBrainsMono-OFL.txt', 'fixture license');
+      write(root, 'archify/assets/Inter-OFL.txt', 'fixture license');
       git(root, ['add', '.']);
       if (embedded) {
-        assert.throws(() => stageCleanSkill({ repoRoot: root, destination }), /missing required disclosure: JetBrains Mono/);
+        assert.throws(() => stageCleanSkill({ repoRoot: root, destination }), /missing required disclosure: Inter/);
         assert.equal(fs.existsSync(destination), false);
         write(root, 'THIRD_PARTY_NOTICES.md', canonicalNotices);
         write(root, 'archify/THIRD_PARTY_NOTICES.md', canonicalNotices);
         stageCleanSkill({ repoRoot: root, destination });
-        assert.equal(fs.readFileSync(path.join(destination, 'assets/JetBrainsMono-OFL.txt'), 'utf8'), 'fixture license');
+        assert.equal(fs.readFileSync(path.join(destination, 'assets/Inter-OFL.txt'), 'utf8'), 'fixture license');
         fs.rmSync(destination, { recursive: true });
-        fs.unlinkSync(path.join(root, 'archify/assets/JetBrainsMono-OFL.txt'));
+        fs.unlinkSync(path.join(root, 'archify/assets/Inter-OFL.txt'));
         git(root, ['add', '.']);
-        assert.throws(() => stageCleanSkill({ repoRoot: root, destination }), /requires assets\/JetBrainsMono-OFL.txt/);
+        assert.throws(() => stageCleanSkill({ repoRoot: root, destination }), /requires assets\/Inter-OFL.txt/);
       } else {
         stageCleanSkill({ repoRoot: root, destination });
         assert.equal(fs.readFileSync(path.join(destination, 'THIRD_PARTY_NOTICES.md'), 'utf8'), legacy);

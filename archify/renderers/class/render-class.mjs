@@ -1048,7 +1048,7 @@ ${[...new Set(Object.values(KIND_TONE))].map((tone) => `          svg[data-class
           svg[data-class-ui] .cl-type-ref { fill: var(--text-muted); }
           svg[data-class-ui] .cl-punct { fill: var(--text-muted); opacity: .8; }
           svg[data-class-ui] .cl-label-box { stroke: var(--lane-stroke); stroke-width: .8; }
-          svg[data-class-ui] .cl-member { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', 'Liberation Mono', 'Noto Sans Mono CJK SC', 'PingFang SC', 'Microsoft YaHei', monospace; }
+          svg[data-class-ui] .cl-member { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'DejaVu Sans Mono', 'Liberation Mono', 'Noto Sans Mono CJK SC', 'PingFang SC', 'Microsoft YaHei', monospace; }
           svg[data-class-ui] .cl-dashed { stroke-dasharray: 6 4; }
           svg[data-class-ui] .cl-marker { stroke: var(--arrow); }
           svg[data-class-ui] .cl-marker-hollow { fill: var(--mask); }

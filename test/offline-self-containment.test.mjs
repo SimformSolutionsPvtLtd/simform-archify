@@ -23,21 +23,21 @@ const DIAGRAMS = [
 
 test('the viewer template carries its own font and readable provenance', () => {
   assertOfflineArtifact(template, 'template');
-  const license = fs.readFileSync(path.join(skillRoot, 'assets/JetBrainsMono-OFL.txt'), 'utf8').trim();
+  const license = fs.readFileSync(path.join(skillRoot, 'assets/Inter-OFL.txt'), 'utf8').trim();
   assert.ok(inspectDocuments(template)[0].styles.some((css) => css.includes(license)), 'standalone font CSS must carry the full license');
   const notices = fs.readFileSync(path.join(skillRoot, 'THIRD_PARTY_NOTICES.md'), 'utf8');
-  assert.match(notices, /## JetBrains Mono/);
-  assert.match(notices, /assets\/JetBrainsMono-OFL\.txt/);
+  assert.match(notices, /## Inter/);
+  assert.match(notices, /assets\/Inter-OFL\.txt/);
 });
 
 test('font checks accept equivalent CSS but reject missing bytes, coverage and local overrides', () => {
   const css = inspectDocuments(template)[0].styles.join('\n');
-  const reordered = css.replaceAll("font-family: 'JetBrains Mono'; font-style: normal;", 'font-style:normal; font-family:"JetBrains Mono";');
+  const reordered = css.replaceAll("font-family: 'Inter'; font-style: normal;", 'font-style:normal; font-family:"Inter";');
   assertFontCss(reordered, 'equivalent CSS');
   assert.throws(() => assertFontCss(css.replace(/@font-face\s*\{[^}]+\}/, ''), 'missing face'));
   assert.throws(() => assertFontCss(css.replace('base64,', 'base64,A'), 'corrupt bytes'));
-  assert.throws(() => assertFontCss(css.replace('U+0460-052F', 'U+0460-052E'), 'missing character'));
-  assert.throws(() => assertFontCss(css.replace('src: url(', "src: local('JetBrains Mono'), url("), 'local override'));
+  assert.throws(() => assertFontCss(css.replace('U+0000-00FF', 'U+0000-00FE'), 'missing character'));
+  assert.throws(() => assertFontCss(css.replace('src: url(', "src: local('Inter'), url("), 'local override'));
 });
 
 test('each compare srcdoc must carry its own font and reject external resources', () => {
@@ -48,7 +48,7 @@ test('each compare srcdoc must carry its own font and reject external resources'
   for (const resource of ['<link rel="stylesheet" href="//fonts.example/font.css">', '<style>@import "https://fonts.example/font.css";</style>', '<img srcset="https://images.example/1.png 1x, https://images.example/2.png 2x">']) {
     assert.throws(() => assertOfflineArtifact(frame(template) + frame(template + resource), 'compare'), /external subresource/);
   }
-  assertOfflineArtifact(template + '<!-- https://github.com/JetBrains/JetBrainsMono --><a href="https://github.com/JetBrains/JetBrainsMono">Source</a>', 'attribution');
+  assertOfflineArtifact(template + '<!-- https://github.com/rsms/inter --><a href="https://github.com/rsms/inter">Source</a>', 'attribution');
 });
 
 test('a freshly delivered artifact of every type reaches no external origin', () => {
@@ -74,7 +74,9 @@ test('a freshly delivered artifact of every type reaches no external origin', ()
 
 test('every checked-in viewer artifact carries its font and reaches no external origin', () => {
   // Delivery-chain roots only; frozen experiments are not maintained viewers.
-  const tracked = spawnSync('git', ['ls-files', '-z', '--', 'archify/examples', 'docs', 'examples'], { cwd: repoRoot, encoding: 'utf8' });
+  // Simform fork: docs/ is the upstream website build (repository-evidence cases
+  // that cannot be regenerated here) and is neither published nor maintained.
+  const tracked = spawnSync('git', ['ls-files', '-z', '--', 'archify/examples', 'examples'], { cwd: repoRoot, encoding: 'utf8' });
   assert.equal(tracked.status, 0, tracked.stderr);
   const artifacts = tracked.stdout.split('\0').filter((entry) => entry.endsWith('.html'))
     .filter((entry) => /Archify\.readerLayout/.test(fs.readFileSync(path.join(repoRoot, entry), 'utf8')));

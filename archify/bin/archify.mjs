@@ -6,6 +6,12 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+// Simform fork: the built-in release check only knows upstream Archify, so its
+// notices would tell Simform users to replace this fork with upstream. It is off
+// unless SIMFORM_ARCHIFY_UPDATE_CHECK=1 (an explicit ARCHIFY_UPDATE_CHECK_DISABLED wins).
+if (process.env.SIMFORM_ARCHIFY_UPDATE_CHECK !== '1' && process.env.ARCHIFY_UPDATE_CHECK_DISABLED === undefined) {
+  process.env.ARCHIFY_UPDATE_CHECK_DISABLED = '1';
+}
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const skillRoot = path.resolve(__dirname, '..');
 

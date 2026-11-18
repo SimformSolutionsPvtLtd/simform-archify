@@ -49,18 +49,32 @@ The OpenAI vector path is recorded from the
 Use remains subject to those current guidelines and any applicable trademark
 rights. Its inclusion does not state or imply endorsement by OpenAI.
 
-## JetBrains Mono
+## Inter
 
-Delivered Archify viewer artifacts embed the JetBrains Mono variable font
-subsets served by Google Fonts. For characters covered by these subsets, font
+Delivered viewer artifacts embed the Inter variable font
+subsets distributed by Fontsource (`@fontsource-variable/inter` 5.3.0): the
+latin and latin-ext subsets. For characters covered by these subsets, font
 selection does not depend on a network request or a locally installed copy.
-Uncovered characters (including CJK) still use the system fallback stack;
-browser and operating-system rasterization can differ.
-JetBrains Mono is maintained at
-[github.com/JetBrains/JetBrainsMono](https://github.com/JetBrains/JetBrainsMono)
+Uncovered characters (including Cyrillic, Greek, Vietnamese and CJK) still use
+the system fallback stack; browser and operating-system rasterization can differ.
+Inter is maintained at [github.com/rsms/inter](https://github.com/rsms/inter)
 and is distributed under the SIL Open Font License 1.1. The complete license
-text is preserved in `assets/JetBrainsMono-OFL.txt` in the packaged Skill and
+text is preserved in `assets/Inter-OFL.txt` in the packaged Skill and
 in the font CSS carried by standalone HTML and SVG exports.
+
+## Microsoft icon packs
+
+The Simform fork ships Azure, Microsoft 365, Microsoft Entra, Microsoft Fabric
+and Dynamics 365 icons in `icon-packs/`. They are unmodified copies of the
+official downloads recorded, with source URLs and archive digests, in
+`icon-packs/SOURCES.md`. Microsoft permits these icons in architecture diagrams,
+training materials and documentation; it does not permit altering the artwork or
+using the icons to represent another product or service. The terms shipped with
+each archive are kept next to the icons as `TERMS-*` files. The Fabric set is
+MIT-licensed (`@fabric-msft/svg-icons`, Copyright Microsoft Corporation).
+Microsoft, Azure, Entra, Fabric, Dynamics 365 and Microsoft 365 names and logos
+remain the property of Microsoft Corporation; their appearance in a diagram
+does not imply endorsement by or affiliation with Microsoft.
 
 ## Pele
 

@@ -35,6 +35,7 @@ const EXCLUDED_FILES = new Set([
   'archify/package-lock.json',
   'archify/scripts/generate-brand-marks.mjs',
   'archify/scripts/generate-validators.mjs',
+  'archify/scripts/sync-icon-packs.mjs',
 ]);
 const EXCLUDED_SEGMENTS = new Set([
   '.DS_Store',
@@ -474,8 +475,8 @@ function validateThirdPartyNoticeInputs(repoRoot, packageEntries) {
   }
 
   const embeddedFonts = packageEntries.some((entry) => entry.content.includes('data:font/woff2'));
-  if (embeddedFonts && !packageEntries.some((entry) => entry.relative === 'archify/assets/JetBrainsMono-OFL.txt')) {
-    throw new Error('embedded viewer font requires assets/JetBrainsMono-OFL.txt');
+  if (embeddedFonts && !packageEntries.some((entry) => entry.relative === 'archify/assets/Inter-OFL.txt')) {
+    throw new Error('embedded viewer font requires assets/Inter-OFL.txt');
   }
   const packagedNotices = packagedEntry.content;
   assertThirdPartyNotices(repositoryNotices.toString('utf8'), 'repository THIRD_PARTY_NOTICES.md', { embeddedFonts });

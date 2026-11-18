@@ -2,40 +2,41 @@
 name: Archify
 description: A precise, vivid technical instrument for trustworthy interactive architecture maps.
 colors:
-  canvas: "#020617"
-  mask: "#0F172A"
-  ink: "#FFFFFF"
-  muted: "#94A3B8"
-  dim: "#475569"
-  border: "#1E293B"
-  frontend: "#22D3EE"
-  backend: "#34D399"
-  database: "#A78BFA"
-  cloud: "#FBBF24"
-  security: "#FB7185"
-  messagebus: "#FB923C"
-  external: "#94A3B8"
+  canvas: "#F4F1FB"
+  mask: "#FFFFFF"
+  ink: "#1A1024"
+  muted: "#6B6478"
+  dim: "#6B6478"
+  border: "#E5DEF1"
+  emphasis: "#E0314C"
+  frontend: "#5B2A9E"
+  backend: "#34A0A4"
+  database: "#380D6F"
+  cloud: "#D84315"
+  security: "#1A1024"
+  messagebus: "#4865A1"
+  external: "#6B6478"
 typography:
   headline:
-    fontFamily: "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+    fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
     fontSize: "1.5rem"
     fontWeight: 700
     lineHeight: 1.2
     letterSpacing: "-0.025em"
   title:
-    fontFamily: "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+    fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
     fontSize: "0.875rem"
     fontWeight: 600
     lineHeight: 1.4
     letterSpacing: "normal"
   body:
-    fontFamily: "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+    fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
     fontSize: "0.75rem"
     fontWeight: 400
     lineHeight: 1.55
     letterSpacing: "normal"
   label:
-    fontFamily: "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+    fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
     fontSize: "0.625rem"
     fontWeight: 700
     lineHeight: 1.35
@@ -99,25 +100,25 @@ The visual system is precise, dark-first, and vivid only where semantics earn it
 
 ## Colors
 
-The palette is a midnight console with seven semantic signals; color identifies meaning, never decoration.
+Simform fork: the palette is the Simform design system (light canvas by default, dark variant) with seven semantic node signals; color identifies meaning, never decoration. Brand red `emphasis` marks only the one highlighted flow. See DECISIONS.md D-03 and D-04.
 
 ### Primary
 
-- **Verified Cyan** (`frontend`): the main focus, navigation, and frontend signal. Its scarcity establishes hierarchy.
+- **Simform Purple** (`frontend`): the main focus, navigation, and frontend signal. Its scarcity establishes hierarchy.
 
 ### Secondary
 
-- **Proof Green** (`backend`): backend semantics, verified evidence, and successful state.
-- **Repository Violet** (`database`): persisted state, stores, and inward relationships.
+- **Simform Teal** (`backend`): backend semantics, verified evidence, and successful state.
+- **Deep Plum** (`database`): persisted state, stores, and inward relationships.
 
 ### Tertiary
 
-- **Boundary Rose** (`security`): policy, security, and guarded paths.
-- **Cloud Amber** (`cloud`), **Transit Orange** (`messagebus`), and **External Slate** (`external`): stable semantic categories, never interchangeable accents.
+- **Plum Ink** (`security`): policy, security, and guarded paths.
+- **Cloud Orange** (`cloud`), **Transit Blue** (`messagebus`), and **External Muted** (`external`): stable semantic categories, never interchangeable accents.
 
 ### Neutral
 
-- **Midnight Canvas** (`canvas`) and **Ink Mask** (`mask`): the dark workspace and opaque geometry mask.
+- **Lavender Canvas** (`canvas`) and **White Mask** (`mask`): the light workspace and opaque geometry mask. Dark mode uses `#18052F` and `#241043`.
 - **Instrument Ink** (`ink`), **Quiet Copy** (`muted`), **Dim Annotation** (`dim`), and **Structural Border** (`border`): the text and containment ladder.
 
 ### Named Rules
@@ -128,11 +129,11 @@ The palette is a midnight console with seven semantic signals; color identifies 
 
 ## Typography
 
-**Display Font:** JetBrains Mono (with system monospace fallbacks)<br>
-**Body Font:** JetBrains Mono (with system monospace fallbacks)<br>
-**Label/Mono Font:** JetBrains Mono
+**Display Font:** Inter (with system sans-serif fallbacks)<br>
+**Body Font:** Inter (with system sans-serif fallbacks)<br>
+**Label/Mono Font:** Inter; code members in class diagrams use the system monospace stack
 
-**Character:** A single mono family makes the artifact feel authored by an engineering instrument. Hierarchy comes from weight, scale, spacing, and case rather than a decorative display face.
+**Character:** A single family, Inter, keeps the artifact calm and precise and matches Simform. Hierarchy comes from weight, scale, spacing, and case rather than a decorative display face.
 
 ### Hierarchy
 
