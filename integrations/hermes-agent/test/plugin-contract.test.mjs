@@ -78,19 +78,15 @@ test('docs stay community opt-in, cover Windows, and refuse a Python rewrite', (
   assert.match(docs, /not an agent-switcher target/i);
 });
 
-test('README install tables mention Hermes without adding a switcher agent', () => {
-  const english = fs.readFileSync(path.join(repoRoot, 'README.md'), 'utf8');
+test('upstream README install tables mention Hermes; the Simform fork keeps the integration but does not advertise it', () => {
+  // Simform fork (DECISIONS.md D-02, D-14, D-23): README.md describes the Simform install paths only,
+  // and the upstream install pages are gone. The translated READMEs are upstream's and keep the row.
   const chinese = fs.readFileSync(path.join(repoRoot, 'README_ZH.md'), 'utf8');
   const japanese = fs.readFileSync(path.join(repoRoot, 'README_JA.md'), 'utf8');
-  const start = fs.readFileSync(path.join(repoRoot, 'docs', 'start.html'), 'utf8');
-  assert.match(english, /\| \*\*Hermes Agent\*\* \|/);
   assert.match(chinese, /\| \*\*Hermes Agent\*\* \|/);
   assert.match(japanese, /\| \*\*Hermes Agent\*\* \|/);
-  assert.match(english, /integrations\/hermes-agent\/README\.md/);
-  assert.match(english, /hermes skills install skills-sh\/tt-a1i\/archify\/archify -y/);
   const skill = fs.readFileSync(path.join(repoRoot, 'archify', 'SKILL.md'), 'utf8');
-  assert.match(skill, /^name: archify$/m);
-  assert.doesNotMatch(start, /data-agent="hermes"/);
+  assert.match(skill, /^name: simform-archify$/m);
 });
 
 test('Archify core does not import or branch on Hermes Agent', () => {
