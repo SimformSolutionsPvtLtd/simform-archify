@@ -29,9 +29,54 @@ colour, label and relationships stay authoritative.
      "pos": [490, 120], "size": [210, 76] }
    ```
 
-3. No match: omit `brand`. Never substitute a similar-looking icon, and do not
-   use a Microsoft icon for a product that is not that Microsoft service.
+3. No match: use a generic icon (below) or omit `brand`. Never substitute a
+   similar-looking Microsoft icon, and do not use a Microsoft icon for a product
+   that is not that Microsoft service.
    `validate` fails with the closest ids when a `brand` value is unknown.
+
+## Generic icons
+
+Not every node is a Microsoft service. Users, API servers, queues, caches, workers
+and gateways have no Azure icon, and a diagram where only some nodes carry an icon
+looks unfinished. The `generic-` pack (49 Lucide line icons, ISC licence) covers
+them. Use it through the same `brand` field:
+
+```json
+{ "id": "jobs", "type": "messagebus", "label": "Job queue", "brand": "queue",
+  "pos": [490, 300], "size": [210, 76] }
+```
+
+| Kind | Ids (aliases work too) |
+| --- | --- |
+| People and clients | `generic-user`, `generic-users`, `generic-admin`, `generic-browser`, `generic-mobile-app`, `generic-desktop-app`, `generic-dashboard` |
+| Compute | `generic-api-server`, `generic-microservice`, `generic-worker`, `generic-scheduler`, `generic-batch-job`, `generic-container`, `generic-serverless-function` |
+| Networking | `generic-gateway`, `generic-load-balancer`, `generic-network`, `generic-internet` |
+| Data | `generic-database`, `generic-cache`, `generic-object-storage`, `generic-file-storage`, `generic-data-warehouse`, `generic-data-lake`, `generic-vector-database`, `generic-search-index` |
+| Messaging | `generic-queue`, `generic-event-bus`, `generic-event-stream`, `generic-webhook`, `generic-email`, `generic-notification`, `generic-chat` |
+| Security | `generic-identity-provider`, `generic-secrets`, `generic-firewall`, `generic-security` |
+| Operations and business | `generic-monitoring`, `generic-logging`, `generic-ci-cd`, `generic-configuration`, `generic-payments`, `generic-analytics`, `generic-agent`, `generic-ml-model`, `generic-etl`, `generic-iot-device`, `generic-external-api`, `generic-cloud-service` |
+
+- **Prefer the Azure icon** when the user names an Azure service. `queue` alone means
+  the generic icon; `azure-storage-queue` or `service bus` mean Azure's.
+- **They take the node's colour.** Unlike the Microsoft artwork, generic icons are
+  line art drawn in the node type's own stroke colour, on a tile that follows the
+  theme. The Microsoft icons are never recoloured.
+- **Automatic fallback.** In an architecture diagram that already shows a Microsoft
+  icon, a node without `brand` gets a generic icon inferred from its label and type
+  (`Job queue` gets the queue, `Users` the people icon). An explicit `brand` always
+  wins. A node too narrow for an icon and its label keeps none. Set
+  `SIMFORM_GENERIC_ICONS=off` to switch the inference off.
+- **Do not use a generic icon for an Azure service** that has its own.
+
+### Named technologies
+
+A technology that is not an Azure service but has a built-in brand mark uses that mark
+through `brand`: PostgreSQL, MySQL, MongoDB, Redis, Qdrant, Milvus, Neo4j, Kafka, NGINX,
+React, Python, TypeScript, GraphQL, Celery, LangChain, LangGraph, LlamaIndex, Agno, CrewAI,
+and the rest listed by `node bin/archify.mjs brands`. In architecture diagrams they draw in
+the same 48px gutter as the Azure icons (a node too narrow for that keeps the small corner
+badge). Microsoft Agent Framework has no published logo file, so it uses
+`generic-agent` (`"brand": "microsoft agent framework"` resolves to it).
 
 ## Rules that keep diagrams correct
 
@@ -46,8 +91,8 @@ colour, label and relationships stay authoritative.
   fit. A node too narrow for its label fails validation with a `brand top rail`
   message; widen it or shorten the label. Workflow, sequence, data-flow and lifecycle
   diagrams keep a 24px corner icon, so size those nodes at least 160px wide.
-- **One icon per service node.** Use plain nodes (no `brand`) for users, networks
-  and anything that is not a Microsoft service.
+- **One icon per node.** Microsoft services get their own icon; everything else gets
+  a generic one (see above).
 - **Pick `type` by role,** not by icon: `frontend` clients and UIs, `backend`
   compute (App Service, Functions, AKS), `database` data stores, `cloud` edge and
   platform services (Front Door, Storage, CDN), `security` identity and secrets

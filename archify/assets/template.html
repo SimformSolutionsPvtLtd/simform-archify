@@ -647,7 +647,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       animation: none;
     }
 
-    html[data-motion-capable="true"] .pulse-dot { animation: pulse 2s infinite; }
+    /* Static: a status dot that pulses forever draws the eye for nothing. */
+    html[data-motion-capable="true"] .pulse-dot { animation: none; }
 
     @keyframes pulse {
       0%, 100% { opacity: 1; }
@@ -1188,16 +1189,16 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       border-radius: 50%;
       background: var(--backend-stroke);
       box-shadow: 0 0 0 0 color-mix(in srgb, var(--backend-stroke) 52%, transparent);
-      animation: archify-radar-live 2.4s ease-out infinite;
+      animation: none;
     }
     .overview-map-copy { min-width: 0; line-height: 1.1; }
     .overview-map-copy strong {
       display: block;
       overflow: hidden;
       color: var(--frontend-stroke);
-      font-size: 0.59rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      font-size: 0.6875rem;
+      letter-spacing: 0;
+      text-transform: none;
       white-space: nowrap;
       text-overflow: ellipsis;
     }
@@ -1224,10 +1225,10 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       background: transparent;
       color: var(--frontend-stroke);
       font: inherit;
-      font-size: 0.49rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0;
+      text-transform: none;
       white-space: nowrap;
       cursor: pointer;
     }
@@ -1321,9 +1322,9 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       gap: 0.5rem;
       padding: 0 0.52rem 0.46rem;
       color: var(--text-faint);
-      font-size: 0.49rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      font-size: 0.6875rem;
+      letter-spacing: 0;
+      text-transform: none;
     }
     .diagram-nav #btn-overview-map[aria-expanded="true"] {
       color: var(--frontend-stroke);
@@ -1392,10 +1393,10 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     .semantic-lens-eyebrow {
       display: block;
       color: var(--database-stroke);
-      font-size: 0.5rem;
-      font-weight: 800;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0;
+      text-transform: none;
     }
     .semantic-lens-title {
       display: block;
@@ -1796,10 +1797,10 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       display: block;
       margin-bottom: 0.18rem;
       color: var(--frontend-stroke);
-      font-size: 0.5rem;
-      font-weight: 800;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0;
+      text-transform: none;
     }
     .relationship-lens-title {
       display: block;
@@ -1845,8 +1846,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     .semantic-passport-meta [data-passport="kind"] {
       border-color: color-mix(in srgb, var(--frontend-stroke) 50%, var(--toolbar-border));
       color: var(--frontend-stroke);
-      font-weight: 800;
-      text-transform: uppercase;
+      font-weight: 600;
+      text-transform: none;
     }
     .semantic-passport-meta [data-passport="tag"] { color: var(--cloud-stroke); }
     .semantic-passport-meta [data-passport="brand"] {
@@ -1878,10 +1879,10 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       align-items: center;
       gap: 0.28rem;
       color: var(--backend-stroke);
-      font-size: 0.5rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0;
+      text-transform: none;
     }
     .semantic-passport-evidence-status::before {
       content: '';
@@ -1955,10 +1956,10 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     .semantic-passport-reach[hidden] { display: none; }
     .semantic-passport-reach-label {
       color: var(--text-faint);
-      font-size: 0.5rem;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0;
+      text-transform: none;
     }
     .semantic-passport-reach-actions {
       display: grid;
@@ -2031,10 +2032,10 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       display: block;
       padding: 0.24rem 0.38rem 0.16rem;
       color: var(--text-faint);
-      font-size: 0.5rem;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0;
+      text-transform: none;
     }
     .relationship-lens-row {
       display: grid;
@@ -2121,10 +2122,10 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     .diagram-guide-eyebrow {
       display: block;
       color: var(--cloud-stroke);
-      font-size: 0.5rem;
-      font-weight: 800;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0;
+      text-transform: none;
     }
     .diagram-guide-title {
       display: block;
@@ -2351,8 +2352,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     .node-finder-head strong {
       color: var(--text);
       font-size: 0.6875rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      letter-spacing: 0;
+      text-transform: none;
     }
     .node-finder[data-context="route-source"] .node-finder-head strong { color: var(--frontend-stroke); }
     .node-finder[data-context="route-target"] .node-finder-head strong { color: var(--security-stroke); }
@@ -2499,10 +2500,10 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       padding: 0.1rem 0.3rem;
       border: 1px solid color-mix(in srgb, currentColor 52%, transparent);
       border-radius: 999px;
-      font-size: 0.5rem;
-      font-weight: 800;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0;
+      text-transform: none;
     }
     .node-finder[data-context="route-target"] .node-finder-result em { color: var(--security-stroke); }
     .node-finder-empty {
@@ -3620,7 +3621,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
        with the wave it controls. Motion Governor mirrors the planned cycle from
        the diagram SVG onto the document. */
     html[data-ambient-motion="running"][data-motion="live"]:not([data-motion-owner]):not([data-embed]):not([data-share-playback]):not([data-document-hidden]) #btn-motion .motion-control-dot {
-      animation: archify-motion-dot-breathe var(--flow-cycle-chrome, 6.4s) ease-in-out infinite;
+      animation: none;
     }
     @keyframes archify-motion-dot-breathe {
       0%, 100% { opacity: 1; transform: scale(1); }
@@ -4223,6 +4224,13 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       stroke-linecap: round;
       stroke-linejoin: round;
     }
+    /* Generic (Lucide) icons are line art in the node's own colour: the tile
+       follows the theme panel instead of staying white, so the glyph keeps its
+       contrast in dark mode. Microsoft icons keep the white plate above. */
+    svg .brand-mark-line .brand-mark-badge { fill: var(--panel); }
+    svg .brand-mark-line .brand-mark-frame {
+      stroke: color-mix(in srgb, currentColor 38%, transparent);
+    }
     svg[data-preset="blueprint"] .brand-mark-badge,
     svg[data-preset="blueprint"] .brand-mark-frame { rx: 1px; }
 
@@ -4311,16 +4319,13 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       transition: stroke 150ms ease, stroke-width 150ms ease, filter 150ms ease;
     }
     svg [data-legend-count-badge] { pointer-events: none; }
-    svg [data-legend-count-badge] rect {
-      fill: var(--mask);
-      stroke: var(--panel-border);
-      stroke-width: 1;
-      vector-effect: non-scaling-stroke;
-    }
+    /* A count is a quiet number, not a pill. */
+    svg [data-legend-count-badge] rect { fill: none; stroke: none; }
     svg [data-legend-count-badge] text {
       fill: var(--text-muted);
-      font-size: 8px;
-      font-weight: 700;
+      font-size: 9px;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
       text-anchor: middle;
     }
     svg [data-legend-kind][role="button"]:hover [data-legend-hit] {
@@ -4328,18 +4333,14 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     }
     svg [data-legend-kind][role="button"]:focus-visible [data-legend-hit] {
       stroke: var(--frontend-stroke);
-      stroke-width: 1.8;
-      filter: drop-shadow(0 0 3px var(--frontend-stroke));
+      stroke-width: 2.2;
     }
     svg [data-legend-kind][data-legend-selected] [data-legend-hit] {
       stroke: var(--database-stroke);
       stroke-width: 2.2;
       stroke-dasharray: 3 2;
     }
-    svg [data-legend-kind][data-legend-selected] [data-legend-count-badge] rect {
-      stroke: var(--database-stroke);
-      stroke-width: 1.8;
-    }
+    svg [data-legend-kind][data-legend-selected] [data-legend-count-badge] text { fill: var(--text); }
     svg [data-legend-kind][data-legend-zero] { opacity: 0.44; }
     svg[data-preset="signal-flow"] [data-legend-kind][data-legend-selected] [data-legend-hit] {
       filter: drop-shadow(0 0 4px var(--database-stroke));

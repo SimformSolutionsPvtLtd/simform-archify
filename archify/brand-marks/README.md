@@ -1,6 +1,6 @@
 # Built-in brand marks
 
-Archify ships a bounded catalogue of 107 commonly used brands for architecture,
+Archify ships a bounded catalogue of 118 commonly used brands for architecture,
 workflow, sequence, data-flow, and lifecycle nodes. The mark is optional authored
 identity: it never replaces the node's semantic `type`, color, label, or
 relationships.
@@ -11,7 +11,7 @@ digest-pinned `brand` value. Normal render and validate commands do not perform
 an unpinned capture, and changed or unavailable content fails closed.
 
 Most vector paths and brand metadata are generated from Simple Icons 16.28.0.
-The OpenAI mark is traced to OpenAI's official brand guidelines. Every generated
+The OpenAI mark is traced to OpenAI's official brand guidelines. The LlamaIndex mark is the single-colour path from [lobe-icons](https://github.com/lobehub/lobe-icons) (MIT), and the Agno mark is the symbol from Agno's own logo file in its repository (`agno-agi/agno`), translated into a square viewBox without other changes. Every generated
 entry records its source and, when available upstream, its guidelines and license
 metadata in `renderers/shared/generated-brand-marks.mjs`.
 

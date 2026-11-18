@@ -267,10 +267,9 @@ Published artifacts must be reproducible from tracked content. Use a tracked-onl
 Review source and focused tests before regenerating artifacts. Regenerate only outputs whose authoritative inputs changed, from the final combined source:
 
 ```sh
-node scripts/build-gallery.mjs docs
-node scripts/build-guide.mjs docs/guide.html
-node scripts/build-start.mjs docs/start.html
-node scripts/build-readme-showcase.mjs
+node scripts/generate-viewer.mjs
+npm --prefix archify run render:examples
+(cd archify && node scripts/render-examples.mjs)
 scripts/build-zip.sh /tmp/archify-contrib.zip
 ```
 

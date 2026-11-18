@@ -45,10 +45,6 @@ test('all maintained Node check names remain and publication uses exhaustive ver
   for (const step of canonical.steps.filter(step => step.uses || step.name === 'Install renderer dependencies')) {
     assert.equal(step.if, "needs.scope.outputs.scope == 'core'", 'full aggregation must not bootstrap another runtime');
   }
-  for (const name of ['deploy-pages', 'deploy-cloudflare']) {
-    assert.ok(ci.jobs[name].needs.includes('test'));
-    assert.ok(ci.jobs[name].needs.includes('canonical-test'));
-  }
   assert.ok(ci.jobs.test.steps.some(step => step.run === 'npm run test:compat'));
   assert.ok(release.jobs.release.steps.some(step => step.run === 'npm run test:full'));
   assert.ok(!release.jobs.release.steps.some(step => step.run === 'npm test'));

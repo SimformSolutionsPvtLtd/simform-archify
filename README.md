@@ -19,7 +19,7 @@ Describe a system to your AI agent. Simform Archify turns it into one checked, s
 | | Upstream Archify | Simform Archify |
 | --- | --- | --- |
 | Look | Slate and neon, JetBrains Mono | Simform design system: lavender canvas, plum text, Inter, one red accent. Light by default, dark available. |
-| Icons | 107 brand marks (AWS, GitHub, ...) | Same, plus 1,097 official Microsoft icons: Azure, Microsoft 365, Entra, Fabric, Dynamics 365 |
+| Icons | 107 brand marks (AWS, GitHub, ...) | 118 brand marks (adds Qdrant, LangChain, LangGraph, LlamaIndex, Agno, CrewAI, Milvus, Neo4j, NGINX, GraphQL, Celery), 1,097 official Microsoft icons (Azure, Microsoft 365, Entra, Fabric, Dynamics 365) and 49 generic icons for API servers, queues, users and the like |
 | SharePoint | Not addressed | Embed guide and a tested iframe mode |
 | Skill name | `archify` | `simform-archify` |
 | Update notices | Point at upstream releases | Off by default |
@@ -76,6 +76,8 @@ which routes to App Service; the app reads Key Vault secrets, queries Azure SQL
 and queues jobs on Service Bus, drained by Functions. Entra ID signs users in.
 ```
 
+For an architecture diagram the agent first asks which style to follow: Microservices (the default), N-tier, Web-queue-worker, Event-driven, Big data, Big compute, or "work it out from the codebase", where it reads your repository and picks the best style or a combination. The styles are the ones in the [Azure Architecture Center guide](https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles/).
+
 The agent writes a JSON description, runs `finalize` (validation, layout checks, a real-browser check) and gives you an HTML file. Continue in conversation: "add Cosmos DB", "highlight the sign-in path", "show it dark".
 
 Try the bundled example without an agent:
@@ -100,13 +102,16 @@ Put an icon on a node with the `brand` field, by service name or alias:
 | Microsoft Entra | `entra-` | 7 | Entra ID, Verified ID, Private Access |
 | Microsoft Fabric | `fabric-` | 75 | Lakehouse, Pipeline, Power BI, OneLake |
 | Dynamics 365 | `d365-` | 16 | Sales, Finance, Business Central |
+| Generic (Lucide) | `generic-` | 49 | API server, Queue, Cache, Worker, User, Browser, Gateway |
+
+Named technologies (PostgreSQL, Redis, MongoDB, Qdrant, React, Python, TypeScript, LangChain, LlamaIndex, Agno ...) use their built-in brand mark, for example `"brand": "qdrant"`, drawn at the same size as the Azure icons. Components that are not Microsoft services or a named technology (users, API servers, queues, caches, workers, gateways, agents) use the generic pack, for example `"brand": "queue"`. In an architecture diagram that already shows Azure icons, a node with no `brand` gets a generic icon inferred from its label and type; set `SIMFORM_GENERIC_ICONS=off` to switch that off. Generic icons are Lucide line art (ISC licence) drawn in the node's colour. The Microsoft icons are never recoloured.
 
 Find an id with `node archify/bin/archify.mjs brands "service bus"`. Aliases such as `aks`, `app service`, `azure sql`, `front door` and `entra` work too. An unknown name fails validation and lists the closest icons; it never falls back to a lookalike.
 
 Rules (also in [references/azure-icons.md](archify/references/azure-icons.md), which the skill reads):
 
 - Label the node with the service name. Microsoft's terms ask for the name beside the icon.
-- Icons are never recoloured, cropped or reshaped, and must not stand for a non-Microsoft product.
+- Microsoft icons are never recoloured, cropped or reshaped, and must not stand for a non-Microsoft product. Use a generic icon for those.
 - Architecture diagrams draw the icon at 48px in a left gutter with the label beside it. Size icon nodes about 210×76 or larger; narrower nodes fail validation rather than clip the label.
 - Workflow, sequence, data-flow and lifecycle diagrams keep a 24px corner icon, so give those nodes at least 160px of width.
 - Icons work on architecture, workflow, sequence, data-flow and lifecycle diagrams.
@@ -163,6 +168,8 @@ Layout of what this fork added:
 | `archify/icon-packs/` | Curated Microsoft SVGs, `catalog.json`, `aliases.json`, `SOURCES.md`, terms files |
 | `archify/scripts/sync-icon-packs.mjs` | Download, curate and verify the icon packs |
 | `archify/renderers/shared/icon-packs.mjs` | Catalogue lookup, SVG safety check, id namespacing |
+| `archify/renderers/shared/generic-icons.mjs` | Picks a generic icon from a node's label and type |
+| `archify/references/architecture-styles.md` | The style question and how each style is drawn |
 | `archify/references/azure-icons.md`, `sharepoint-embed.md` | Skill instructions for icons and embedding |
 | `archify/examples/azure-web-platform.architecture.json` | Azure sample |
 | `DECISIONS.md` | Every fork decision, with how to reverse it |

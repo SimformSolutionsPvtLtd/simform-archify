@@ -217,59 +217,13 @@ test('release docs disclose that mutable Release assets are verified only at dep
   assert.doesNotMatch(design, /即使 Release 资产后来可被替换，也不能脱离/);
 });
 
-test('GitHub Pages deploys the verified website artifact only after every repository gate succeeds', () => {
+test('CI keeps the browser, media, package and Windows gates', () => {
   const workflow = fs.readFileSync(path.join(repoRoot, '.github', 'workflows', 'ci.yml'), 'utf8');
-  const job = workflowJob(workflow, 'deploy-pages');
-  assert.match(workflow, /push:\n    branches: \[main, dev\]/);
-  assert.match(job, /if: github\.event_name == 'push' && github\.ref == 'refs\/heads\/main'/);
   const jobs = parse(workflow).jobs;
-  const dependencies = jobs['deploy-pages'].needs;
-  for (const gate of ['test', 'canonical-test', 'webm-artifact', 'zip-freshness', 'published-update-manifest', 'package-smoke', 'windows-test-portability', 'website']) {
-    assert.ok(dependencies.includes(gate), `Pages deployment must require ${gate}`);
-  }
-  assert.match(job, /pages: write/);
-  assert.match(job, /id-token: write/);
-  assert.match(job, /repos\/\$\{GITHUB_REPOSITORY\}\/git\/ref\/heads\/main/);
-  assert.match(job, /current_main" == "\$GITHUB_SHA"/);
-  assert.match(job, /Skipping obsolete Pages deployment/);
-  assert.match(job, /if: steps\.deployment-head\.outputs\.current == 'true'/);
-  assertPinnedAction(
-    job,
-    'actions/configure-pages',
-    '45bfe0192ca1faeb007ade9deae92b16b8254a0d',
-    'v6.0.0',
-  );
-  // v5 delegates to upload-artifact v7 (Node 24); v4 still embeds Node 20.
-  assertPinnedAction(
-    job,
-    'actions/upload-pages-artifact',
-    'fc324d3547104276b827a68afc52ff2a11cc49c9',
-    'v5.0.0',
-  );
-  assertPinnedAction(
-    job,
-    'actions/download-artifact',
-    'd3f86a106a0bac45b974a628896c90dbdf5c8093',
-    'v4.3.0',
-  );
-  assert.match(job, /name: website-dist/);
-  assert.match(job, /path: website\/dist/);
-  assertPinnedAction(
-    job,
-    'actions/deploy-pages',
-    'cd2ce8fcbc39b97be8ca5fce6e763baed58fa128',
-    'v5.0.0',
-  );
-  const website = workflowJob(workflow, 'website');
-  assert.match(website, /npm run check && npm run build && npm test/);
-  assert.match(website, /ARCHIFY_SITE_ROOT:.*website\/dist/);
-  assertPinnedAction(
-    website,
-    'actions/upload-artifact',
-    '65462800fd760344b1a7b4382951275a0abb4808',
-    'v4.3.3',
-  );
-  assert.match(website, /name: website-dist/);
+  assert.match(workflow, /push:\n    branches: \[main, dev\]/);
+  assert.equal(jobs.website, undefined, 'the upstream website is not built in this fork (DECISIONS.md D-23)');
+  assert.equal(jobs['deploy-pages'], undefined);
+  assert.equal(jobs['deploy-cloudflare'], undefined);
   const browser = workflowJob(workflow, 'browser-regression');
   assert.match(browser, /Run shared browser regression gate/);
   assert.match(browser, /npm run test:browser -- --shard=\$\{\{ matrix\.shard \}\}\/2/);
@@ -277,7 +231,7 @@ test('GitHub Pages deploys the verified website artifact only after every reposi
   assert.match(media, /needs: \[scope, browser-regression, webm-decode\]/);
   assert.match(media, /test "\$BROWSER_RESULT" = success/);
   assert.match(media, /test "\$WEBM_RESULT" = success/);
-  assert.ok(jobs['canonical-test'].needs.includes('full-regression'), 'Pages must wait for the complete regression and adapter checks');
+  assert.ok(jobs['canonical-test'].needs.includes('full-regression'), 'the media gate must wait for the complete regression and adapter checks');
   const packageSmoke = workflowJob(workflow, 'package-smoke');
   assert.match(packageSmoke, /Verify delivery-lock ownership with real subprocesses/);
   assert.match(packageSmoke, /Verify macOS opener stays behind delivery-lock release/);
@@ -1706,10 +1660,6 @@ test('CI and tagged releases keep real Windows paths on both Nodes and detailed 
       assert.equal(job.includes(suite), false, `${label} must get ${suite} from the shared runner`);
     }
   }
-
-  const ci = workflows[0][1];
-  const deploy = workflowJob(ci, 'deploy-pages');
-  assert.match(deploy, /needs: \[[^\]]*windows-test-portability[^\]]*\]/);
 
   const releaseWorkflow = workflows[1][1];
   const release = workflowJob(releaseWorkflow, 'release');

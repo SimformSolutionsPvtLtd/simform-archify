@@ -251,27 +251,7 @@ if (hasSupportedVersion) {
     }
   }
 
-  const landing = read('docs/index.html');
-  checkDocument('docs/index.html', landing, version, isDevelopment);
-  checkNoRavenSwitcher('docs/index.html', landing);
-  const proofCounts = [...landing.matchAll(/\b\d+\/\d+\b/g)].map((match) => match[0]);
-  const staleProofCounts = [...new Set(proofCounts.filter((count) => count !== '9/9'))];
-  if (proofCounts.length === 0 || staleProofCounts.length > 0) {
-    const found = staleProofCounts.length > 0 ? `; found ${staleProofCounts.join(', ')}` : '';
-    fail(`docs/index.html proof receipt must say 9/9 everywhere; every N/N proof receipt must be exactly 9/9${found}.`);
-  }
-  const start = read('docs/start.html');
-  checkDocument('docs/start.html', start, version, isDevelopment);
-  checkNoRavenSwitcher('docs/start.html', start);
   checkRoadmap('ROADMAP.md', read('ROADMAP.md'), version, isDevelopment);
-
-  for (const templatePath of [
-    'scripts/start-template.html',
-    'scripts/guide-template.html',
-    'scripts/gallery-template.html',
-  ]) {
-    checkIdentityTemplate(templatePath, read(templatePath), isDevelopment);
-  }
 
   const changelogMarker = `Development identity: \`v${version}\``;
   if (hasRealUnreleasedChanges && !unreleased.includes(changelogMarker)) {

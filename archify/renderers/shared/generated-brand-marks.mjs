@@ -2,6 +2,27 @@
 // Simple Icons 16.28.0. Do not edit by hand.
 export const BRAND_MARKS = Object.freeze([
   {
+    "id": "agno",
+    "title": "Agno",
+    "category": "ai",
+    "aliases": [
+      "agno-agi",
+      "phidata"
+    ],
+    "domains": [
+      "agno.com",
+      "docs.agno.com"
+    ],
+    "viewBox": 54.76,
+    "hex": "000000",
+    "path": "M36.00 3.86H13.01V11.86H30.38L45.20 50.90H54.76L36.00 3.86ZM23.54 42.90H0.00V50.90H23.54V42.90Z",
+    "provenance": {
+      "provider": "Official brand asset",
+      "source": "https://github.com/agno-agi/agno",
+      "guidelines": "https://www.agno.com/"
+    }
+  },
+  {
     "id": "airtable",
     "title": "Airtable",
     "category": "collaboration",
@@ -199,6 +220,23 @@ export const BRAND_MARKS = Object.freeze([
     }
   },
   {
+    "id": "celery",
+    "title": "Celery",
+    "category": "framework",
+    "aliases": [],
+    "domains": [
+      "docs.celeryq.dev"
+    ],
+    "viewBox": 24,
+    "hex": "37814A",
+    "path": "M2.303 0A2.298 2.298 0 0 0 0 2.303v19.394A2.298 2.298 0 0 0 2.303 24h19.394A2.298 2.298 0 0 0 24 21.697V2.303A2.298 2.298 0 0 0 21.697 0zm8.177 3.072c4.098 0 7.028 1.438 7.68 1.764l-1.194 2.55c-2.442-1.057-4.993-1.41-5.672-1.41-1.574 0-2.17.922-2.17 1.763v8.494c0 .869.596 1.791 2.17 1.791.679 0 3.23-.38 5.672-1.41l1.194 2.496c-.435.271-3.637 1.818-7.68 1.818-1.112 0-4.64-.244-4.64-4.64V7.713c0-4.397 3.528-4.64 4.64-4.64z",
+    "provenance": {
+      "provider": "Simple Icons",
+      "providerVersion": "16.28.0",
+      "source": "https://github.com/celery/celery/blob/4d77ddddb10797011dc10dd2e4e1e7a7467b8431/docs/images/favicon.ico"
+    }
+  },
+  {
     "id": "circleci",
     "title": "CircleCI",
     "category": "engineering",
@@ -286,6 +324,25 @@ export const BRAND_MARKS = Object.freeze([
       "provider": "Simple Icons",
       "providerVersion": "16.28.0",
       "source": "https://cloudinary.com"
+    }
+  },
+  {
+    "id": "crewai",
+    "title": "CrewAI",
+    "category": "ai",
+    "aliases": [
+      "crew-ai"
+    ],
+    "domains": [
+      "crewai.com"
+    ],
+    "viewBox": 24,
+    "hex": "FF5A50",
+    "path": "M12.482.18C7.161 1.319 1.478 9.069 1.426 15.372c-.051 5.527 3.1 8.68 8.68 8.627 6.716-.05 14.259-6.87 12.09-10.9-.672-1.292-1.396-1.344-2.687-.207-1.602 1.395-1.654.31-.207-2.893 1.757-3.98 1.705-5.322-.31-7.544C17.03.388 14.962-.388 12.482.181Zm5.322 2.068c2.273 2.015 2.376 4.236.465 8.42-1.395 3.1-2.17 3.515-3.824 1.86-1.24-1.24-1.343-3.46-.258-6.044 1.137-2.635.982-3.1-.568-1.653-3.72 3.358-6.458 9.765-5.424 12.503.464 1.189.825 1.395 2.737 1.395 2.79 0 6.303-1.705 7.957-3.926 1.756-2.274 2.79-2.274 2.79-.052 0 3.875-6.459 8.627-11.625 8.627-6.251 0-9.351-4.752-7.491-11.47.878-2.995 4.443-7.904 7.077-9.66 3.255-2.17 5.684-2.17 8.164 0z",
+    "provenance": {
+      "provider": "Simple Icons",
+      "providerVersion": "16.28.0",
+      "source": "https://github.com/crewAIInc/crewAI/blob/a7696d5aed7a85333735dde370fd9f0547aaabf5/docs/favicon.svg"
     }
   },
   {
@@ -692,6 +749,24 @@ export const BRAND_MARKS = Object.freeze([
     }
   },
   {
+    "id": "graphql",
+    "title": "GraphQL",
+    "category": "framework",
+    "aliases": [],
+    "domains": [
+      "graphql.org"
+    ],
+    "viewBox": 24,
+    "hex": "E10098",
+    "path": "M12.002 0a2.138 2.138 0 1 0 0 4.277 2.138 2.138 0 1 0 0-4.277zm8.54 4.931a2.138 2.138 0 1 0 0 4.277 2.138 2.138 0 1 0 0-4.277zm0 9.862a2.138 2.138 0 1 0 0 4.277 2.138 2.138 0 1 0 0-4.277zm-8.54 4.931a2.138 2.138 0 1 0 0 4.276 2.138 2.138 0 1 0 0-4.276zm-8.542-4.93a2.138 2.138 0 1 0 0 4.276 2.138 2.138 0 1 0 0-4.277zm0-9.863a2.138 2.138 0 1 0 0 4.277 2.138 2.138 0 1 0 0-4.277zm8.542-3.378L2.953 6.777v10.448l9.049 5.224 9.047-5.224V6.777zm0 1.601 7.66 13.27H4.34zm-1.387.371L3.97 15.037V7.363zm2.774 0 6.646 3.838v7.674zM5.355 17.44h13.293l-6.646 3.836z",
+    "provenance": {
+      "provider": "Simple Icons",
+      "providerVersion": "16.28.0",
+      "source": "https://graphql.org/brand",
+      "guidelines": "https://graphql.org/brand"
+    }
+  },
+  {
     "id": "helm",
     "title": "Helm",
     "category": "engineering",
@@ -883,6 +958,41 @@ export const BRAND_MARKS = Object.freeze([
     }
   },
   {
+    "id": "langchain",
+    "title": "LangChain",
+    "category": "ai",
+    "aliases": [],
+    "domains": [
+      "langchain.com",
+      "python.langchain.com"
+    ],
+    "viewBox": 24,
+    "hex": "7FC8FF",
+    "path": "M13.796 0a6.93 6.93 0 0 0-4.91 2.019L5.451 5.455l3.273 3.27 3.432-3.432a2.284 2.284 0 0 1 3.277 0 2.28 2.28 0 0 1 0 3.275L12 12.001l3.273 3.273 3.433-3.435c2.692-2.692 2.692-7.127 0-9.82A6.92 6.92 0 0 0 13.796 0m-5.07 8.728-3.433 3.434c-2.692 2.693-2.692 7.126 0 9.819A6.92 6.92 0 0 0 10.203 24a6.93 6.93 0 0 0 4.911-2.02l3.432-3.432-3.271-3.272-3.433 3.433a2.284 2.284 0 0 1-3.277 0 2.28 2.28 0 0 1 0-3.276L12 12z",
+    "provenance": {
+      "provider": "Simple Icons",
+      "providerVersion": "16.28.0",
+      "source": "https://www.langchain.com/langchain"
+    }
+  },
+  {
+    "id": "langgraph",
+    "title": "LangGraph",
+    "category": "ai",
+    "aliases": [],
+    "domains": [
+      "langchain-ai.github.io"
+    ],
+    "viewBox": 24,
+    "hex": "7FC8FF",
+    "path": "M5 19H10A5 5 0 115 14ZM19 14A5 5 0 1114 19H19ZM10 5A5 5 0 105 10V5ZM19 5V10A5 5 0 1014 5Z",
+    "provenance": {
+      "provider": "Simple Icons",
+      "providerVersion": "16.28.0",
+      "source": "https://www.langchain.com/langgraph"
+    }
+  },
+  {
     "id": "linear",
     "title": "Linear",
     "category": "collaboration",
@@ -897,6 +1007,25 @@ export const BRAND_MARKS = Object.freeze([
       "provider": "Simple Icons",
       "providerVersion": "16.28.0",
       "source": "https://linear.app"
+    }
+  },
+  {
+    "id": "llamaindex",
+    "title": "LlamaIndex",
+    "category": "ai",
+    "aliases": [
+      "llama-index"
+    ],
+    "domains": [
+      "llamaindex.ai"
+    ],
+    "viewBox": 24,
+    "hex": "000000",
+    "path": "M15.855 17.122c-2.092.924-4.358.545-5.23.24 0 .21-.01.857-.048 1.78-.038.924-.332 1.507-.475 1.684.016.577.029 1.837-.047 2.26a1.93 1.93 0 01-.476.914H8.295c.114-.577.555-.946.761-1.058.114-1.193-.11-2.229-.238-2.597-.126.449-.437 1.49-.665 2.068a6.418 6.418 0 01-.713 1.299h-.951c-.048-.578.27-.77.475-.77.095-.177.323-.731.476-1.54.152-.807-.064-2.324-.19-2.981v-2.068c-1.522-.818-2.092-1.636-2.473-2.55-.304-.73-.222-1.843-.142-2.308-.096-.176-.373-.625-.476-1.25-.142-.866-.063-1.491 0-1.828-.095-.096-.285-.587-.285-1.78 0-1.192.349-1.811.523-1.972v-.529c-.666-.048-1.331-.336-1.712-.721-.38-.385-.095-.962.143-1.154.238-.193.475-.049.808-.145.333-.096.618-.192.76-.48C4.512 1.403 4.287.448 4.16 0c.57.077.935.577 1.046.818V0c.713.337 1.997 1.154 2.425 2.934.342 1.424.586 4.409.665 5.723 1.823.016 4.137-.26 6.229.193 1.901.412 2.757 1.25 3.755 1.25.999 0 1.57-.577 2.282-.096.714.481 1.094 1.828.999 2.838-.076.808-.697 1.074-.998 1.106-.38 1.27 0 2.485.237 2.934v1.827c.111.16.333.655.333 1.347 0 .693-.222 1.154-.333 1.299.19 1.077-.08 2.18-.238 2.597h-1.283c.152-.385.412-.481.523-.481.228-1.193.063-2.293-.048-2.693-.722-.424-1.188-1.17-1.331-1.491.016.272-.029 1.029-.333 1.875-.304.847-.76 1.347-.95 1.491v1.01h-1.284c0-.615.348-.737.523-.721.222-.4.76-1.01.76-2.212 0-1.015-.713-1.492-1.236-2.405-.248-.434-.127-.978-.047-1.203z",
+    "provenance": {
+      "provider": "Official brand asset",
+      "source": "https://github.com/lobehub/lobe-icons",
+      "guidelines": "https://www.llamaindex.ai/"
     }
   },
   {
@@ -937,6 +1066,23 @@ export const BRAND_MARKS = Object.freeze([
       "providerVersion": "16.28.0",
       "source": "https://www.meta.com",
       "guidelines": "https://www.facebook.com/brand/resources/meta/company-brand"
+    }
+  },
+  {
+    "id": "milvus",
+    "title": "Milvus",
+    "category": "data",
+    "aliases": [],
+    "domains": [
+      "milvus.io"
+    ],
+    "viewBox": 24,
+    "hex": "00A1EA",
+    "path": "M15.536 11.997a4.005 4.005 0 0 1-4.015 4.018c-2.36-.005-4.05-1.954-4.01-4.08a4.013 4.013 0 0 1 8.025.061zm8.463-.04a.823.823 0 0 1-.25.616q-1.122 1.128-2.248 2.25c-.082.083-.165.1-.25.054-.091-.048-.124-.121-.098-.242a12.764 12.764 0 0 0 .25-1.626 12.153 12.153 0 0 0 .028-1.49 11.56 11.56 0 0 0-.27-2.114.255.255 0 0 1 .017-.213.194.194 0 0 1 .273-.052.628.628 0 0 1 .086.075l2.174 2.174c.171.17.29.366.289.567zM11.226 20c-1.89-.002-3.488-.565-4.926-1.611a8.317 8.317 0 0 1-.952-.816q-1.125-1.112-2.253-2.221l-1.931-1.899c-.291-.285-.583-.57-.873-.857-.393-.39-.387-.83.012-1.217.296-.288.59-.579.885-.868q1.433-1.41 2.867-2.818c.532-.522 1.057-1.051 1.604-1.555a7.996 7.996 0 0 1 3.786-1.95A7.668 7.668 0 0 1 11.135 4c1.89.015 3.612.546 5.113 1.723a7.987 7.987 0 0 1 2.282 2.77 7.567 7.567 0 0 1 .76 2.556c.255 2.404-.414 4.518-2.046 6.312a7.772 7.772 0 0 1-3.927 2.366 8.995 8.995 0 0 1-2.091.274zm.364-2.137a5.819 5.819 0 0 0 .605-.036 5.35 5.35 0 0 0 .38-.05c1.525-.28 2.76-1.051 3.704-2.263.92-1.178 1.28-2.542 1.168-4.028a5.626 5.626 0 0 0-.631-2.168c-.627-1.213-1.596-2.067-2.817-2.646-1.096-.519-2.248-.649-3.443-.464A5.814 5.814 0 0 0 7.33 7.8c-.858.83-1.707 1.669-2.56 2.504-.426.419-.85.841-1.28 1.257-.274.266-.286.588-.013.857q.804.793 1.61 1.583c.722.709 1.44 1.42 2.165 2.126 1.184 1.153 2.604 1.737 4.339 1.738z",
+    "provenance": {
+      "provider": "Simple Icons",
+      "providerVersion": "16.28.0",
+      "source": "https://github.com/milvus-io/artwork/blob/e30bffa2b0632b0d4cefcdd4e1a2c09fee5b0d28/icon/black/milvus-icon-black.svg"
     }
   },
   {
@@ -1013,6 +1159,26 @@ export const BRAND_MARKS = Object.freeze([
     }
   },
   {
+    "id": "neo4j",
+    "title": "Neo4j",
+    "category": "data",
+    "aliases": [
+      "neo4j-graph-database"
+    ],
+    "domains": [
+      "neo4j.com"
+    ],
+    "viewBox": 24,
+    "hex": "4581C3",
+    "path": "M9.629 13.227c-.593 0-1.139.2-1.58.533l-2.892-1.976a2.61 2.61 0 0 0 .101-.711 2.633 2.633 0 0 0-2.629-2.629A2.632 2.632 0 0 0 0 11.073a2.632 2.632 0 0 0 2.629 2.629c.593 0 1.139-.2 1.579-.533L7.1 15.145c-.063.226-.1.465-.1.711 0 .247.037.484.1.711l-2.892 1.976a2.608 2.608 0 0 0-1.579-.533A2.632 2.632 0 0 0 0 20.639a2.632 2.632 0 0 0 2.629 2.629 2.632 2.632 0 0 0 2.629-2.629c0-.247-.037-.485-.101-.711l2.892-1.976c.441.333.987.533 1.58.533a2.633 2.633 0 0 0 2.629-2.629c0-1.45-1.18-2.629-2.629-2.629ZM16.112.732c-4.72 0-7.888 2.748-7.888 8.082v3.802a3.525 3.525 0 0 1 3.071.008v-3.81c0-3.459 1.907-5.237 4.817-5.237s4.817 1.778 4.817 5.237v8.309H24V8.814C24 3.448 20.832.732 16.112.732Z",
+    "provenance": {
+      "provider": "Simple Icons",
+      "providerVersion": "16.28.0",
+      "source": "https://neo4j.com/brand/#logo",
+      "guidelines": "https://neo4j.com/brand/#logo"
+    }
+  },
+  {
     "id": "neon",
     "title": "Neon",
     "category": "cloud",
@@ -1067,6 +1233,24 @@ export const BRAND_MARKS = Object.freeze([
       "providerVersion": "16.28.0",
       "source": "https://vercel.com/design/brands#next-js",
       "guidelines": "https://vercel.com/design/brands#next-js"
+    }
+  },
+  {
+    "id": "nginx",
+    "title": "NGINX",
+    "category": "engineering",
+    "aliases": [],
+    "domains": [
+      "nginx.org"
+    ],
+    "viewBox": 24,
+    "hex": "009639",
+    "path": "M12 0L1.605 6v12L12 24l10.395-6V6L12 0zm6 16.59c0 .705-.646 1.29-1.529 1.29-.631 0-1.351-.255-1.801-.81l-6-7.141v6.66c0 .721-.57 1.29-1.274 1.29H7.32c-.721 0-1.29-.6-1.29-1.29V7.41c0-.705.63-1.29 1.5-1.29.646 0 1.38.255 1.83.81l5.97 7.141V7.41c0-.721.6-1.29 1.29-1.29h.075c.72 0 1.29.6 1.29 1.29v9.18H18z",
+    "provenance": {
+      "provider": "Simple Icons",
+      "providerVersion": "16.28.0",
+      "source": "https://www.nginx.com/press/",
+      "guidelines": "https://www.nginx.com/press/"
     }
   },
   {
@@ -1383,6 +1567,27 @@ export const BRAND_MARKS = Object.freeze([
       "providerVersion": "16.28.0",
       "source": "https://github.com/pytorch/pytorch.github.io/blob/8f083bd12192ca12d5e1c1f3d236f4831d823d8f/assets/images/logo.svg",
       "guidelines": "https://github.com/pytorch/pytorch.github.io/blob/381117ec296f002b2de475402ef29cca6c55e209/assets/brand-guidelines/PyTorch-Brand-Guidelines.pdf"
+    }
+  },
+  {
+    "id": "qdrant",
+    "title": "Qdrant",
+    "category": "data",
+    "aliases": [
+      "qdrant-db",
+      "qdrant-vector-database"
+    ],
+    "domains": [
+      "qdrant.tech"
+    ],
+    "viewBox": 24,
+    "hex": "DC244C",
+    "path": "m12 16.5 3.897-2.25v-4.5L12 7.5 8.103 9.75v4.5zM1.607 18 12 24l3.897-2.25v-4.5L12 19.5l-6.495-3.75v-7.5L12 4.5l6.495 3.75v15L22.393 21V6L12 0 1.607 6Z",
+    "provenance": {
+      "provider": "Simple Icons",
+      "providerVersion": "16.28.0",
+      "source": "https://qdrant.tech/img/brand-resources-logos/qdrant-brandmark-white.svg",
+      "guidelines": "https://qdrant.tech/brand-resources/"
     }
   },
   {

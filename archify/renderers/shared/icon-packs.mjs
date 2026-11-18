@@ -196,8 +196,16 @@ export function loadPackIcon(icon, scope) {
   if (digest !== icon.sha256) throw new Error(`Icon ${icon.id} does not match its catalogue digest; run "npm --prefix archify run check:icon-packs".`);
   const inspected = inspectIconSvg(bytes.toString('utf8'));
   if (!inspected.ok) throw new Error(`Icon ${icon.id} is not renderable: ${inspected.reason}`);
-  return {
-    viewBox: inspected.viewBox,
-    markup: namespaceSvgIds(inspected.inner, `${scope}-`),
-  };
+  const markup = namespaceSvgIds(inspected.inner, `${scope}-`);
+  // Generic (Lucide) icons are line art: the presentation attributes live on the
+  // root <svg>, which is stripped, so they are carried on a wrapper group. The
+  // stroke is currentColor, so the node's own colour reaches the glyph.
+  if (icon.pack === 'generic') {
+    return {
+      viewBox: inspected.viewBox,
+      line: true,
+      markup: `<g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${markup}</g>`,
+    };
+  }
+  return { viewBox: inspected.viewBox, markup };
 }

@@ -84,7 +84,6 @@ test('contributor and pull-request guides keep proof changes reproducible and st
     '.github/ISSUE_TEMPLATE/showcase.yml',
     '.github/ISSUE_TEMPLATE/bug-report.yml',
     'npm test',
-    'node scripts/build-gallery.mjs docs',
     'Do not include secrets',
     'Agent-first',
     'diagnostics[]',

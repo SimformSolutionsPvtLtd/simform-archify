@@ -16,8 +16,6 @@ test('Cursor onboarding stays explicit, bilingual, and backed by the same Skill'
   const englishMirror = fs.readFileSync(path.join(repoRoot, 'README_EN.md'), 'utf8');
   const chinese = fs.readFileSync(path.join(repoRoot, 'README_ZH.md'), 'utf8');
   const japanese = fs.readFileSync(path.join(repoRoot, 'README_JA.md'), 'utf8');
-  const start = fs.readFileSync(path.join(repoRoot, 'docs', 'start.html'), 'utf8');
-  const landing = fs.readFileSync(path.join(repoRoot, 'docs', 'index.html'), 'utf8');
 
   assert.equal(english, englishMirror, 'English README mirrors must stay synchronized');
   for (const agent of ['Cursor', 'Claude Code', 'Codex CLI', 'OpenCode']) {
@@ -27,27 +25,11 @@ test('Cursor onboarding stays explicit, bilingual, and backed by the same Skill'
   }
   // Simform fork: the English README installs from the Simform repository (DECISIONS.md D-14).
   for (const surface of [chinese, japanese]) assert.ok(surface.includes(cursorCommand));
-  // The legacy static landing page keeps its original GitHub install source.
-  assert.ok(landing.includes('npx -y skills add tt-a1i/archify --skill archify --agent cursor --global --copy --yes'));
-  for (const surface of [english, chinese, japanese, start, landing]) {
+  for (const surface of [english, chinese, japanese]) {
     assert.doesNotMatch(surface, /skills use[^\n<]*--agent cursor/);
     assert.doesNotMatch(surface, /~\/\.cursor\/skills\/archify/);
     assert.doesNotMatch(surface, /all Cursor models|every Cursor model/i);
   }
-
-  for (const [id, label] of [
-    ['cursor', 'Cursor'],
-    ['codex', 'Codex'],
-    ['claude-code', 'Claude Code'],
-    ['opencode', 'OpenCode'],
-    ['github-copilot', 'GitHub Copilot'],
-  ]) {
-    assert.match(start, new RegExp(`data-agent="${id}">${label}<\\/button>`));
-  }
-  assert.match(start, /KNOWN_AGENTS\.has\(requestedAgent\)/);
-  assert.match(start, /same Skill/);
-  assert.match(start, /同一份 Skill/);
-  assert.doesNotMatch(start, /vendor-specific (?:renderer|schema|skill)/i);
 });
 
 test('the zero-dependency archive works from the canonical Cursor-visible agent path', () => {
