@@ -28,7 +28,20 @@ Everything else (ten diagram types, validation, layout repair, the interactive v
 
 ## Install
 
-Simform Archify is an agent skill. It needs Node 18 or later and works with Claude Code, Cursor, Codex CLI and OpenCode.
+Simform Archify is an agent skill. It needs Node 18 or later (and Chrome for its browser check) and works with Claude Code, Claude Desktop, Cursor, Codex CLI and OpenCode.
+
+### Claude Code and Claude Desktop (plugin marketplace)
+
+This repository is also a Claude plugin marketplace. In Claude Code:
+
+```text
+/plugin marketplace add SimformSolutionsPvtLtd/simform-archify
+/plugin install simform-archify@simform-archify
+```
+
+In Claude Desktop (Cowork and claude.ai), open Customize > Plugins > Add > Add marketplace, enter `SimformSolutionsPvtLtd/simform-archify`, then install `simform-archify`. Update the plugin from the same place. Then ask for a diagram, or run the skill by name.
+
+### Other agents (Skills CLI)
 
 ```bash
 npx -y skills@latest add SimformSolutionsPvtLtd/simform-archify --list --full-depth

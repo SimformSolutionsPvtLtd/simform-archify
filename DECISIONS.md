@@ -24,6 +24,7 @@ and docs refer to them as `D-nn`.
 | D-15 | Things downloaded to build this | Done |
 | D-16 | Known gaps and open items | Open |
 | D-17 | Azure connection labels follow Azure Architecture Center wording | Done |
+| D-18 | This repository is its own Claude plugin marketplace | Done |
 
 ---
 
@@ -275,3 +276,23 @@ secrets are not covered by those pages so `reads secrets` is plain wording, and 
 Center is not a labelling standard, so this is a house style drawn from its language.
 **How to reverse:** edit the labels in the example and the table in the reference; nothing in the
 renderer depends on the wording.
+
+## D-18 This repository is its own Claude plugin marketplace
+
+**Decided:** `.claude-plugin/marketplace.json` at the repository root declares a marketplace
+named `simform-archify` with one plugin, also `simform-archify`, whose `source` is `./archify`.
+There is no `plugin.json`: the `archify/` folder holds `SKILL.md` at its root, which Claude loads
+as a single skill, and the marketplace entry is the plugin manifest. Install with
+`/plugin marketplace add SimformSolutionsPvtLtd/simform-archify` then
+`/plugin install simform-archify@simform-archify`; Claude Desktop users add the same repository
+from Customize > Plugins > Add > Add marketplace.
+**Why:** end users should be able to install the skill in Claude Desktop. Adding it to the
+`simform-brag` marketplace was tried and withdrawn (that PR was closed unmerged) in favour of a
+marketplace that belongs to this repository.
+**Caveats:** the plugin has no `version`, so installs track commits on the default branch. The
+slash command name for a root-level single skill was not confirmed (check `/` autocomplete).
+Running the skill inside Cowork's sandbox (Node 18+ and Chrome needed) was not tested. A test
+install from a clean copy of the repository into an isolated config directory worked, and the
+installed `bin/archify.mjs` ran.
+**How to reverse:** delete `.claude-plugin/` and the README section. The Skills CLI install path
+is unaffected.
