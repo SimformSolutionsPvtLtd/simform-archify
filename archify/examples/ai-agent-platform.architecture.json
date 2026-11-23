@@ -1,0 +1,457 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Agent platform by layer",
+    "subtitle": "Layers as labelled frames, one box per supported provider",
+    "output": "ai-agent-platform.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "Web app",
+      "sublabel": "React SPA",
+      "brand": "browser",
+      "pos": [
+        250,
+        50
+      ],
+      "size": [
+        200,
+        76
+      ]
+    },
+    {
+      "id": "embed",
+      "type": "frontend",
+      "label": "Embedded agent",
+      "sublabel": "CopilotKit",
+      "brand": "ai-copilotkit",
+      "pos": [
+        600,
+        50
+      ],
+      "size": [
+        200,
+        76
+      ]
+    },
+    {
+      "id": "apim",
+      "type": "cloud",
+      "label": "API Management",
+      "sublabel": "public entry",
+      "brand": "api management",
+      "pos": [
+        250,
+        180
+      ],
+      "size": [
+        200,
+        76
+      ]
+    },
+    {
+      "id": "entra",
+      "type": "security",
+      "label": "Entra ID",
+      "sublabel": "OIDC sign-in",
+      "brand": "entra-id",
+      "pos": [
+        600,
+        180
+      ],
+      "size": [
+        200,
+        76
+      ]
+    },
+    {
+      "id": "orch",
+      "type": "backend",
+      "label": "Agent orchestrator",
+      "sublabel": "LangGraph",
+      "brand": "langgraph",
+      "pos": [
+        40,
+        320
+      ],
+      "size": [
+        200,
+        76
+      ]
+    },
+    {
+      "id": "retr",
+      "type": "backend",
+      "label": "Retrieval",
+      "sublabel": "LlamaIndex",
+      "brand": "llamaindex",
+      "pos": [
+        320,
+        320
+      ],
+      "size": [
+        200,
+        76
+      ]
+    },
+    {
+      "id": "tools",
+      "type": "backend",
+      "label": "Tool servers",
+      "sublabel": "MCP servers",
+      "brand": "ai-mcp",
+      "pos": [
+        600,
+        320
+      ],
+      "size": [
+        200,
+        76
+      ]
+    },
+    {
+      "id": "trace",
+      "type": "external",
+      "label": "Tracing",
+      "sublabel": "Langfuse",
+      "brand": "ai-langfuse",
+      "pos": [
+        910,
+        320
+      ],
+      "size": [
+        200,
+        76
+      ]
+    },
+    {
+      "id": "padapt",
+      "type": "backend",
+      "label": "Model adapters",
+      "sublabel": "model routing",
+      "brand": "generic-gateway",
+      "pos": [
+        90,
+        470
+      ],
+      "size": [
+        200,
+        76
+      ]
+    },
+    {
+      "id": "openai",
+      "type": "external",
+      "label": "OpenAI",
+      "sublabel": "GPT models",
+      "brand": "openai",
+      "pos": [
+        90,
+        590
+      ],
+      "size": [
+        200,
+        76
+      ]
+    },
+    {
+      "id": "foundry",
+      "type": "external",
+      "label": "Azure AI Foundry",
+      "sublabel": "hosted models",
+      "brand": "azure-ai-foundry",
+      "pos": [
+        310,
+        590
+      ],
+      "size": [
+        200,
+        76
+      ]
+    },
+    {
+      "id": "anthropic",
+      "type": "external",
+      "label": "Anthropic",
+      "sublabel": "Claude models",
+      "brand": "anthropic",
+      "pos": [
+        90,
+        700
+      ],
+      "size": [
+        200,
+        76
+      ]
+    },
+    {
+      "id": "bedrock",
+      "type": "external",
+      "label": "Amazon Bedrock",
+      "sublabel": "hosted models",
+      "brand": "ai-bedrock",
+      "pos": [
+        310,
+        700
+      ],
+      "size": [
+        200,
+        76
+      ]
+    },
+    {
+      "id": "vertex",
+      "type": "external",
+      "label": "Google Vertex AI",
+      "sublabel": "Gemini models",
+      "brand": "ai-vertex-ai",
+      "pos": [
+        90,
+        810
+      ],
+      "size": [
+        200,
+        76
+      ]
+    },
+    {
+      "id": "ollama",
+      "type": "external",
+      "label": "Ollama",
+      "sublabel": "local models",
+      "brand": "ollama",
+      "pos": [
+        310,
+        810
+      ],
+      "size": [
+        200,
+        76
+      ]
+    },
+    {
+      "id": "vadapt",
+      "type": "backend",
+      "label": "Store adapters",
+      "sublabel": "store routing",
+      "brand": "generic-gateway",
+      "pos": [
+        610,
+        470
+      ],
+      "size": [
+        200,
+        76
+      ]
+    },
+    {
+      "id": "qdrant",
+      "type": "database",
+      "label": "Qdrant",
+      "sublabel": "vector search",
+      "brand": "qdrant",
+      "pos": [
+        610,
+        590
+      ],
+      "size": [
+        200,
+        76
+      ]
+    },
+    {
+      "id": "pinecone",
+      "type": "database",
+      "label": "Pinecone",
+      "sublabel": "managed vectors",
+      "brand": "ai-pinecone",
+      "pos": [
+        830,
+        590
+      ],
+      "size": [
+        200,
+        76
+      ]
+    },
+    {
+      "id": "weaviate",
+      "type": "database",
+      "label": "Weaviate",
+      "sublabel": "vector search",
+      "brand": "ai-weaviate",
+      "pos": [
+        610,
+        700
+      ],
+      "size": [
+        200,
+        76
+      ]
+    },
+    {
+      "id": "chroma",
+      "type": "database",
+      "label": "Chroma",
+      "sublabel": "embedded",
+      "brand": "ai-chroma",
+      "pos": [
+        830,
+        700
+      ],
+      "size": [
+        200,
+        76
+      ]
+    },
+    {
+      "id": "pgvector",
+      "type": "database",
+      "label": "pgvector",
+      "sublabel": "Postgres extension",
+      "brand": "postgresql",
+      "pos": [
+        610,
+        810
+      ],
+      "size": [
+        200,
+        76
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Channels",
+      "wraps": [
+        "web",
+        "embed"
+      ],
+      "pad": 22
+    },
+    {
+      "kind": "region",
+      "label": "Edge and identity",
+      "wraps": [
+        "apim",
+        "entra"
+      ],
+      "pad": 22
+    },
+    {
+      "kind": "region",
+      "label": "Agent runtime",
+      "wraps": [
+        "orch",
+        "retr",
+        "tools",
+        "trace"
+      ],
+      "pad": 22
+    },
+    {
+      "kind": "region",
+      "label": "LLM providers",
+      "wraps": [
+        "padapt",
+        "openai",
+        "foundry",
+        "anthropic",
+        "bedrock",
+        "vertex",
+        "ollama"
+      ],
+      "pad": 22
+    },
+    {
+      "kind": "region",
+      "label": "Vector stores",
+      "wraps": [
+        "vadapt",
+        "qdrant",
+        "pinecone",
+        "weaviate",
+        "chroma",
+        "pgvector"
+      ],
+      "pad": 22
+    }
+  ],
+  "connections": [
+    {
+      "id": "web-apim",
+      "from": "web",
+      "to": "apim",
+      "label": "sends requests",
+      "variant": "emphasis"
+    },
+    {
+      "id": "embed-apim",
+      "from": "embed",
+      "to": "apim",
+      "label": "sends requests",
+      "variant": "emphasis"
+    },
+    {
+      "id": "apim-entra",
+      "from": "apim",
+      "to": "entra",
+      "label": "authenticates",
+      "variant": "security"
+    },
+    {
+      "id": "apim-orch",
+      "from": "apim",
+      "to": "orch",
+      "label": "routes traffic"
+    },
+    {
+      "id": "orch-tools",
+      "from": "orch",
+      "to": "tools",
+      "label": "calls tools"
+    },
+    {
+      "id": "orch-retr",
+      "from": "orch",
+      "to": "retr",
+      "label": "queries"
+    },
+    {
+      "id": "tools-trace",
+      "from": "tools",
+      "to": "trace",
+      "label": "emits traces",
+      "variant": "dashed"
+    },
+    {
+      "id": "orch-padapt",
+      "from": "orch",
+      "to": "padapt",
+      "label": "invokes models",
+      "variant": "emphasis"
+    },
+    {
+      "id": "retr-vadapt",
+      "from": "retr",
+      "to": "vadapt",
+      "label": "retrieves chunks",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "violet",
+      "title": "Reading the layers",
+      "items": [
+        "Each layer is one labelled frame",
+        "Every provider and store is its own box inside its frame"
+      ]
+    }
+  ]
+}

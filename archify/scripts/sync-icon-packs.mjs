@@ -9,6 +9,9 @@
 //   node scripts/sync-icon-packs.mjs --download --only generic
 //       Refresh only the named pack(s); the other packs and their catalogue
 //       entries are kept as they are (no Microsoft download).
+//   node scripts/sync-icon-packs.mjs --download --only ai
+//       The `ai` pack is a list of individual logo files (LLM providers, vector
+//       stores, agent frameworks) fetched from pinned, versioned URLs.
 //   node scripts/sync-icon-packs.mjs --check
 //       Verify icon-packs/catalog.json against the files on disk (digests,
 //       sanitiser, unique ids, alias targets). No network.
@@ -28,12 +31,13 @@ import { sameEntry } from '../renderers/shared/path-semantics.mjs';
 
 const ALIASES_FILE = path.join(ICON_PACKS_ROOT, 'aliases.json');
 const SOURCES_FILE = path.join(ICON_PACKS_ROOT, 'SOURCES.md');
-// Only Microsoft's documentation, its download hosts and its official GitHub
-// samples repository are ever contacted.
+// Only Microsoft's documentation, its download hosts, its official GitHub
+// samples repository, the npm registry and jsDelivr (version-pinned files for the
+// `ai` pack) are ever contacted.
 const ARCHIVE_ALLOWED_HOSTS = new Set([
   'learn.microsoft.com', 'arch-center.azureedge.net', 'download.microsoft.com',
   'go.microsoft.com', 'github.com', 'raw.githubusercontent.com',
-  'registry.npmjs.org',
+  'registry.npmjs.org', 'cdn.jsdelivr.net',
 ]);
 
 const PACKS = {
@@ -90,6 +94,83 @@ PACKS.generic = {
   license: 'ISC (Lucide Icons and Contributors); a few glyphs derive from Feather (MIT). Line art, drawn in the node colour.',
   terms: [/package\/LICENSE$/],
 };
+
+// ---------------------------------------------------------------- ai pack
+// Logos of AI and data-stack providers that no Microsoft pack covers. Each file
+// comes from a pinned, versioned URL, so a re-run fetches identical bytes. Only
+// `fill` may change them: a few sources are single-colour and use `currentColor`
+// (or no fill), which would turn white on a white tile in dark mode, so the
+// source's own brand colour (or black) is written in. Shapes are never edited.
+const LOBE_VERSION = '1.106.0';
+const GILBARBARA_COMMIT = '875d71c5a8e4aa90a33f8b3ea15b8945de9cc183';
+const SIMPLE_ICONS_VERSION = '16.28.0';
+const lobe = (name) => `https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@${LOBE_VERSION}/icons/${name}.svg`;
+const gilbarbara = (name) => `https://cdn.jsdelivr.net/gh/gilbarbara/logos@${GILBARBARA_COMMIT}/logos/${name}.svg`;
+const simple = (name) => `https://cdn.jsdelivr.net/npm/simple-icons@${SIMPLE_ICONS_VERSION}/icons/${name}.svg`;
+
+// [id, title, category, url, origin label, pinned names, optional fill]
+const AI_LOGOS = [
+  ['ai-bedrock', 'Amazon Bedrock', 'llm-provider', lobe('bedrock-color'), 'lobe-icons/bedrock-color', ['bedrock', 'aws bedrock', 'amazon bedrock']],
+  ['ai-vertex-ai', 'Google Vertex AI', 'llm-provider', lobe('vertexai-color'), 'lobe-icons/vertexai-color', ['vertex ai', 'vertex', 'google vertex ai', 'google vertex', 'vertexai']],
+  ['ai-cohere', 'Cohere', 'llm-provider', lobe('cohere-color'), 'lobe-icons/cohere-color', ['cohere']],
+  ['ai-groq', 'Groq', 'llm-provider', lobe('groq'), 'lobe-icons/groq', ['groq'], '#F55036'],
+  ['ai-xai', 'xAI', 'llm-provider', lobe('xai'), 'lobe-icons/xai', ['xai', 'x ai', 'grok'], '#000000'],
+  ['ai-together-ai', 'Together AI', 'llm-provider', lobe('together-color'), 'lobe-icons/together-color', ['together ai', 'together', 'togetherai']],
+  ['ai-fireworks-ai', 'Fireworks AI', 'llm-provider', lobe('fireworks-color'), 'lobe-icons/fireworks-color', ['fireworks ai', 'fireworks', 'fireworksai']],
+  ['ai-cerebras', 'Cerebras', 'llm-provider', lobe('cerebras-color'), 'lobe-icons/cerebras-color', ['cerebras'], '#000000'],
+  ['ai-sambanova', 'SambaNova', 'llm-provider', lobe('sambanova-color'), 'lobe-icons/sambanova-color', ['sambanova', 'samba nova']],
+  ['ai-nvidia', 'NVIDIA', 'llm-provider', lobe('nvidia-color'), 'lobe-icons/nvidia-color', ['nvidia', 'nvidia nim', 'nim']],
+  ['ai-pinecone', 'Pinecone', 'vector-store', gilbarbara('pinecone-icon'), 'gilbarbara/logos/pinecone-icon', ['pinecone']],
+  ['ai-weaviate', 'Weaviate', 'vector-store', gilbarbara('weaviate-icon'), 'gilbarbara/logos/weaviate-icon', ['weaviate']],
+  ['ai-chroma', 'Chroma', 'vector-store', gilbarbara('chroma'), 'gilbarbara/logos/chroma', ['chroma', 'chromadb', 'chroma db']],
+  ['ai-dspy', 'DSPy', 'agent-framework', gilbarbara('dspy'), 'gilbarbara/logos/dspy', ['dspy']],
+  ['ai-pydantic-ai', 'Pydantic AI', 'agent-framework', lobe('pydanticai-color'), 'lobe-icons/pydanticai-color', ['pydantic ai', 'pydanticai']],
+  ['ai-haystack', 'Haystack', 'agent-framework', simple('haystack'), 'simple-icons/haystack', ['haystack', 'deepset haystack'], '#0EAF9C'],
+  ['ai-openhands', 'OpenHands', 'agent-framework', lobe('openhands-color'), 'lobe-icons/openhands-color', ['openhands', 'open hands']],
+  ['ai-mcp', 'Model Context Protocol', 'agent-tooling', lobe('mcp'), 'lobe-icons/mcp', ['mcp', 'model context protocol', 'mcp server', 'mcp servers'], '#000000'],
+  ['ai-copilotkit', 'CopilotKit', 'agent-tooling', lobe('copilotkit-color'), 'lobe-icons/copilotkit-color', ['copilotkit', 'copilot kit']],
+  ['ai-langfuse', 'Langfuse', 'agent-tooling', lobe('langfuse-color'), 'lobe-icons/langfuse-color', ['langfuse']],
+];
+
+PACKS.ai = {
+  title: 'AI and data-stack logos',
+  page: 'https://lobehub.com/icons',
+  direct: AI_LOGOS,
+  fallback: lobe('bedrock-color'),
+  license: 'Per file: lobe-icons (MIT), gilbarbara/logos (CC0) and Simple Icons (CC0) collections. The logos remain trademarks of their owners; use them to name the product, not to imply endorsement.',
+  termsDownloads: [
+    ['https://raw.githubusercontent.com/lobehub/lobe-icons/master/LICENSE', 'LICENSE-lobe-icons.txt'],
+    [`https://cdn.jsdelivr.net/gh/gilbarbara/logos@${GILBARBARA_COMMIT}/LICENSE.txt`, 'LICENSE-gilbarbara-logos.txt'],
+  ],
+  terms: [/LICENSE-[a-z-]+\.txt$/],
+};
+
+function applyFill(text, fill) {
+  if (!fill) return text;
+  if (/currentColor/.test(text)) return text.replace(/currentColor/g, fill);
+  if (/<svg\b[^>]*\sfill=/.test(text)) return text;
+  return text.replace(/<svg\b/, `<svg fill="${fill}"`);
+}
+
+async function fetchAiLogos(directory) {
+  fs.mkdirSync(directory, { recursive: true });
+  for (const [id, , , url, , , fill] of AI_LOGOS) {
+    const text = (await fetchBuffer(url)).toString('utf8');
+    fs.writeFileSync(path.join(directory, `${id}.svg`), applyFill(text, fill));
+  }
+  for (const [url, name] of PACKS.ai.termsDownloads) {
+    fs.writeFileSync(path.join(directory, name), await fetchBuffer(url));
+  }
+}
+
+function aiCandidates(root, files) {
+  const byName = new Map(files.map((candidate) => [path.basename(candidate), candidate]));
+  return AI_LOGOS.map(([id, title, category, , origin, pinned]) => {
+    const file = byName.get(`${id}.svg`);
+    if (!file) throw new Error(`ai pack: ${id}.svg was not downloaded`);
+    return { id, title, category, pinned, file, origin };
+  });
+}
 
 const M365_FAMILIES = [
   ['SharePoint Teal/48x48 SVG Icon', 'sharepoint'],
@@ -257,8 +338,8 @@ const GENERIC_ICONS = [
   ['generic-configuration', 'sliders-horizontal', 'Configuration', 'operations', ['configuration', 'config', 'feature flags', 'settings']],
   ['generic-payments', 'credit-card', 'Payments', 'business', ['payments', 'payment gateway', 'billing', 'checkout']],
   ['generic-analytics', 'chart-column', 'Analytics', 'business', ['analytics', 'reporting', 'business intelligence']],
-  ['generic-agent', 'bot', 'AI agent', 'business', ['ai agent', 'agent', 'agents', 'agent framework', 'microsoft agent framework', 'copilot agent']],
-  ['generic-vector-database', 'database-search', 'Vector database', 'data', ['vector database', 'vector db', 'vector store', 'embeddings store']],
+  ['generic-agent', 'bot', 'AI agent', 'business', ['ai agent', 'agent', 'agents', 'agent framework', 'microsoft agent framework', 'autogen', 'semantic kernel', 'copilot agent']],
+  ['generic-vector-database', 'database-search', 'Vector database', 'data', ['vector database', 'vector db', 'vector store', 'embeddings store', 'faiss']],
   ['generic-ml-model', 'brain-circuit', 'ML model', 'business', ['ml model', 'machine learning', 'ai model', 'inference', 'llm']],
   ['generic-etl', 'shuffle', 'ETL', 'business', ['etl', 'data pipeline', 'data integration', 'ingestion']],
   ['generic-iot-device', 'cpu', 'IoT device', 'business', ['iot device', 'device', 'sensor', 'edge device', 'iot']],
@@ -276,7 +357,7 @@ function genericCandidates(root, files) {
 
 const SELECTORS = {
   azure: azureCandidates, m365: m365Candidates, entra: entraCandidates, fabric: fabricCandidates, d365: d365Candidates,
-  generic: genericCandidates,
+  generic: genericCandidates, ai: aiCandidates,
 };
 
 // ---------------------------------------------------------------- sync
@@ -477,6 +558,12 @@ originals; \`catalog.json\` records each file's digest and original path.
 - The \`generic\` pack is Lucide line art (ISC licence) for components that are
   not Microsoft services: users, API servers, queues, caches and so on. It is
   drawn in each node's own colour, so it is the one pack the renderer recolours.
+- The \`ai\` pack holds logos of LLM providers, vector stores and agent frameworks,
+  each from a pinned source recorded in \`origin\` (lobe-icons MIT, gilbarbara/logos
+  CC0, Simple Icons CC0). Shapes are untouched; a few single-colour files had
+  \`currentColor\` replaced by the brand colour so they stay visible in dark mode.
+  The marks are trademarks of their owners: name the product beside the logo and
+  do not imply endorsement.
 - The terms files shipped with each archive are copied next to the icons as
   \`TERMS-*\`.
 
@@ -541,6 +628,20 @@ async function main() {
     const names = only ? only.split(',').map((name) => name.trim()) : Object.keys(PACKS);
     for (const name of names) if (!PACKS[name]) throw new Error(`Unknown pack "${name}"; choose from ${Object.keys(PACKS).join(', ')}`);
     for (const name of names) {
+      if (PACKS[name].direct) {
+        if (!download) throw new Error(`The ${name} pack is fetched file by file; run with --download --only ${name}`);
+        console.log(`${name}: ${PACKS[name].direct.length} files from pinned lobe-icons, gilbarbara/logos and simple-icons URLs`);
+        const target = path.join(work, name);
+        await fetchAiLogos(target);
+        archives[name] = {
+          url: PACKS[name].page,
+          sha256: sha256(Buffer.from(AI_LOGOS.map(([id]) => sha256(fs.readFileSync(path.join(target, `${id}.svg`)))).join('\n'))),
+        };
+        results[name] = buildPack(name, target);
+        results[name].termsFiles = walk(target).filter((file) => PACKS[name].terms.some((pattern) => pattern.test(toPosix(file))));
+        console.log(`${name}: kept ${results[name].kept.length}/${results[name].candidates}, dropped ${results[name].dropped.length}`);
+        continue;
+      }
       const archiveName = `${name}.${PACKS[name].tarball ? 'tgz' : 'zip'}`;
       const zip = path.join(cache, archiveName);
       let url = `file:${archiveName}`;
