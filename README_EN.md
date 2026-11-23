@@ -103,6 +103,9 @@ Put an icon on a node with the `brand` field, by service name or alias:
 | Microsoft Fabric | `fabric-` | 75 | Lakehouse, Pipeline, Power BI, OneLake |
 | Dynamics 365 | `d365-` | 16 | Sales, Finance, Business Central |
 | Generic (Lucide) | `generic-` | 49 | API server, Queue, Cache, Worker, User, Browser, Gateway |
+| AI stack logos | `ai-` | 20 | Amazon Bedrock, Google Vertex AI, Cohere, Groq, Pinecone, Weaviate, Chroma, DSPy, MCP, Langfuse |
+
+Logos for LLM providers, vector stores and agent frameworks come from the `ai` pack and the built-in marks (OpenAI, Anthropic, Ollama, Qdrant, LangChain, LangGraph, CrewAI ...); the ids are listed in [Azure icons](archify/references/azure-icons.md#ai-and-data-stack-logos). Architecture diagrams are always grouped by layer, one labelled frame per layer with one box per supported provider ([rules](archify/references/architecture-layers.md)).
 
 Named technologies (PostgreSQL, Redis, MongoDB, Qdrant, React, Python, TypeScript, LangChain, LlamaIndex, Agno ...) use their built-in brand mark, for example `"brand": "qdrant"`, drawn at the same size as the Azure icons. Components that are not Microsoft services or a named technology (users, API servers, queues, caches, workers, gateways, agents) use the generic pack, for example `"brand": "queue"`. In an architecture diagram that already shows Azure icons, a node with no `brand` gets a generic icon inferred from its label and type; set `SIMFORM_GENERIC_ICONS=off` to switch that off. Generic icons are Lucide line art (ISC licence) drawn in the node's colour. The Microsoft icons are never recoloured.
 

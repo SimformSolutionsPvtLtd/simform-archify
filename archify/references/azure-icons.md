@@ -1,6 +1,6 @@
 # Azure and Microsoft icons
 
-Simform Archify ships 1,097 official Microsoft icons in `icon-packs/`. Use them
+Simform Archify ships 1,097 official Microsoft icons in `icon-packs/`, plus the generic and AI-stack packs below. Use them
 when a diagram names real Azure or Microsoft services. They go on a node through
 the same `brand` field as any other brand mark; the node's semantic `type`,
 colour, label and relationships stay authoritative.
@@ -77,6 +77,33 @@ and the rest listed by `node bin/archify.mjs brands`. In architecture diagrams t
 the same 48px gutter as the Azure icons (a node too narrow for that keeps the small corner
 badge). Microsoft Agent Framework has no published logo file, so it uses
 `generic-agent` (`"brand": "microsoft agent framework"` resolves to it).
+
+### AI and data-stack logos
+
+A seventh pack, `ai` (ids `ai-*`, 20 logos), holds the colour logos of LLM providers,
+vector stores and agent frameworks that Simform diagrams show most. Use them through
+`brand`, with the provider's own name as the label. The same lookup also reaches the
+Azure icons and the built-in marks, so use this table instead of guessing:
+
+| Kind | `brand` value (the logo that is drawn) | No logo: use instead |
+| --- | --- | --- |
+| LLM providers | `openai`, `anthropic`, `google-gemini`, `mistral-ai`, `deepseek`, `qwen`, `meta`, `ollama`, `openrouter`, `hugging-face`, `perplexity`, `replicate`; `azure-openai`, `azure-ai-foundry` (Azure pack); `ai-bedrock`, `ai-vertex-ai`, `ai-cohere`, `ai-groq`, `ai-xai`, `ai-together-ai`, `ai-fireworks-ai`, `ai-cerebras`, `ai-sambanova`, `ai-nvidia` | `generic-ml-model` |
+| Vector stores | `qdrant`, `milvus`, `ai-pinecone`, `ai-weaviate`, `ai-chroma`, `elasticsearch`, `opensearch`, `redis`, `mongodb`, `neo4j`; `azure-cognitive-search` (Azure AI Search), `azure-cosmos-db`; `postgresql` for pgvector (it is a PostgreSQL extension, so label the node `pgvector`) | `generic-vector-database` (`faiss` resolves to it) |
+| Agent frameworks | `langchain`, `langgraph`, `llamaindex`, `crewai`, `agno`, `ai-dspy`, `ai-pydantic-ai`, `ai-haystack`, `ai-openhands`; `dify`, `n8n` | `generic-agent` (`autogen`, `semantic kernel` and `microsoft agent framework` resolve to it) |
+| Agent tooling | `ai-mcp` (Model Context Protocol), `ai-copilotkit`, `ai-langfuse` | `generic-gateway`, `generic-monitoring` |
+
+- Search with `node bin/archify.mjs brands "<name>" --json`. A name with no mark and no
+  generic alias, for a technology the user wants shown with its real logo, goes through
+  `brands capture <official url>` (see [Brand marks](brand-marks.md)); never borrow
+  another company's logo.
+- AutoGen, Semantic Kernel, Microsoft Agent Framework and FAISS have no logo file in any
+  source Simform ships, so they show the generic icon for their role.
+- The logos come from lobe-icons (MIT), gilbarbara/logos (CC0) and Simple Icons (CC0);
+  `icon-packs/SOURCES.md` records each file's origin. They are trademarks of their owners:
+  name the product beside the logo and do not imply endorsement.
+- Single-colour sources (Groq, xAI, Cerebras, Haystack, MCP) had `currentColor` replaced by
+  the brand colour or black so they stay visible in dark mode. Shapes are never edited.
+- Lay these nodes out by layer: [Architecture layers](architecture-layers.md).
 
 ## Rules that keep diagrams correct
 

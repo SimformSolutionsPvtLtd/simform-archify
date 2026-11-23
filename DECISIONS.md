@@ -31,6 +31,7 @@ and docs refer to them as `D-nn`.
 | D-22 | More built-in brand marks (AI and data stack); built-in marks use the 48px gutter in architecture diagrams | Done |
 | D-23 | Upstream's website, proof gallery and Pages/Cloudflare deploys are removed | Done |
 | D-24 | Upstream-only docs, evidence, benchmarks, community and integrations are removed | Done |
+| D-25 | AI-stack logos live in a seventh icon pack, and architecture diagrams must be grouped by layer | Done, review welcome |
 
 ---
 
@@ -448,3 +449,37 @@ agents from this repository; `test/path-boundary-contract.test.mjs` may still li
 prose mentions still name the removed material. Done by running the suite until it passed, so stray
 references may remain.
 **How to reverse:** `git revert` the commit that carries this entry.
+
+## D-25 AI-stack logos live in an `ai` icon pack, and architecture diagrams must be grouped by layer
+
+**Decided:** a seventh icon pack, `ai` (20 colour logos, ids `ai-*`), covers what the built-in marks
+and the Azure packs lacked: Amazon Bedrock, Google Vertex AI, Cohere, Groq, xAI, Together AI, Fireworks AI,
+Cerebras, SambaNova, NVIDIA (LLM providers); Pinecone, Weaviate, Chroma (vector stores); DSPy,
+Pydantic AI, Haystack, OpenHands (agent frameworks); MCP, CopilotKit, Langfuse (agent tooling). Files are
+fetched one by one from version-pinned jsDelivr URLs (lobe-icons 1.106.0 MIT, gilbarbara/logos at commit
+`875d71c`, CC0, Simple Icons 16.28.0 CC0) by `sync-icon-packs.mjs --download --only ai`; the catalogue
+records each file's digest and origin. A pack, not `brand-marks/catalog.json`, because built-in marks hold one
+path in one colour and Chroma, Weaviate and the Vertex AI logo are multi-colour. FAISS, AutoGen, Semantic
+Kernel and Microsoft Agent Framework have no logo in any of those sources, so their names resolve to
+the generic vector-database and agent icons (`generic-*` aliases).
+`pgvector` is documented as the PostgreSQL mark with the label `pgvector`, because it is a PostgreSQL extension and
+has no logo of its own. The skill gained a mandatory rule, in `SKILL.md` and `references/architecture-layers.md`:
+architecture diagrams are grouped by layer (one labelled `region` frame per layer, members on a grid, layers in
+flow order, one box per supported provider with its own logo, one adapter node receiving the layer's edges, planned
+items tagged). `examples/ai-agent-platform.architecture.json` is the model.
+**Why:** an end user making a ThoughtMesh-Mini diagram had to ask, one message at a time, for provider and
+vector-store logos, and then for each provider in its own box inside a labelled "LLM Providers" and
+"Vector Stores" frame, as the archify.si agent-tool-call workflow organises its lanes. That is now the default.
+**Caveats:** `currentColor` in Groq, xAI, Cerebras and MCP and the missing fill in Haystack were replaced with the
+brand colour or black, so they stay visible on a white tile in dark mode (the only edit to any file). The logos
+are trademarks; the Simple Icons, gilbarbara and lobe-icons licences cover their collections, not the marks. The
+layer rule is skill instruction: nothing in the CLI checks it, and it was not tried with an agent end to end. The
+example was checked by `finalize` and by screenshots in light and dark, not by a designer. Built-in marks need nodes at
+least 190px wide to get the 48px gutter, which limits how many fit across the 1240px canvas.
+**Not done:** `archify.zip` was not rebuilt (it needs official Node 22 with bundled zlib `1.3.1-e00f703`, which was not on
+this machine), so the packaged skill still lacks the `ai` pack and the layer rule, and `test/skill-installation.test.mjs`
+("distributed ZIP carries the same valid Skill frontmatter as source") fails until it is rebuilt with `scripts/build-zip.sh`
+after the new files are committed. Editing `THIRD_PARTY_NOTICES.md` (embedded in every artifact) meant re-rendering the
+checked-in examples, the Checkout compare page and the root architecture examples.
+**How to reverse:** delete the `ai` entry from `PACKS` in `sync-icon-packs.mjs`, remove `icon-packs/ai/` and its catalogue
+entries (re-run the sync), and delete `references/architecture-layers.md`, the example and the `SKILL.md` bullets.

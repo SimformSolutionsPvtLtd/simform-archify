@@ -39,10 +39,10 @@ test('catalogue is complete and every icon file matches its digest', () => {
   const result = spawnSync(process.execPath, [path.join(skillRoot, 'scripts', 'sync-icon-packs.mjs'), '--check'], { encoding: 'utf8' });
   assert.equal(result.status, 0, result.stderr + result.stdout);
   const { icons, packs } = loadIconCatalog();
-  assert.deepEqual(Object.keys(packs).sort(), ['azure', 'd365', 'entra', 'fabric', 'generic', 'm365']);
+  assert.deepEqual(Object.keys(packs).sort(), ['ai', 'azure', 'd365', 'entra', 'fabric', 'generic', 'm365']);
   for (const pack of Object.keys(packs)) {
     assert.ok(icons.some((icon) => icon.pack === pack), `${pack} has icons`);
-    const official = pack === 'generic' ? 'https://lucide.dev/' : 'https://learn.microsoft.com/';
+    const official = pack === 'generic' ? 'https://lucide.dev/' : (pack === 'ai' ? 'https://lobehub.com/' : 'https://learn.microsoft.com/');
     assert.ok(packs[pack].page.startsWith(official), `${pack} records its official page`);
   }
   assert.ok(icons.length > 1000);
@@ -244,4 +244,56 @@ test('built-in marks use the 48px gutter in architecture diagrams and fall back 
   const badge = (id) => html.match(new RegExp(`data-brand-mark="${id}"[^>]+>\\s*<rect width="([\\d.]+)"`))?.[1];
   assert.equal(badge('qdrant'), '48');
   assert.equal(badge('postgresql'), '16', 'a node too narrow for the gutter keeps the corner badge');
+});
+
+test('AI provider, vector store and framework names resolve to logos; names without a logo resolve to a generic icon', () => {
+  for (const [query, id] of [
+    ['bedrock', 'ai-bedrock'], ['aws bedrock', 'ai-bedrock'], ['vertex ai', 'ai-vertex-ai'], ['cohere', 'ai-cohere'], ['groq', 'ai-groq'],
+    ['pinecone', 'ai-pinecone'], ['weaviate', 'ai-weaviate'], ['chromadb', 'ai-chroma'],
+    ['dspy', 'ai-dspy'], ['pydantic ai', 'ai-pydantic-ai'], ['haystack', 'ai-haystack'],
+    ['model context protocol', 'ai-mcp'], ['copilotkit', 'ai-copilotkit'], ['langfuse', 'ai-langfuse'],
+    ['azure openai', 'azure-openai'], ['foundry', 'azure-ai-foundry'],
+    ['autogen', 'generic-agent'], ['semantic kernel', 'generic-agent'], ['faiss', 'generic-vector-database'],
+  ]) {
+    assert.equal(findPackIcon(query)?.id, id, `${query} resolves to ${id}`);
+  }
+});
+
+test('ai pack logos are drawn natively and never rely on currentColor', () => {
+  const { icons } = loadIconCatalog();
+  const ai = icons.filter((icon) => icon.pack === 'ai');
+  assert.ok(ai.length >= 20);
+  for (const icon of ai) {
+    const svg = fs.readFileSync(path.join(skillRoot, 'icon-packs', icon.file), 'utf8');
+    assert.doesNotMatch(svg, /currentColor/, `${icon.id} would turn white on a white tile in dark mode`);
+  }
+  const input = path.join(tmp, 'ai-logos.architecture.json');
+  const output = path.join(tmp, 'ai-logos.html');
+  fs.writeFileSync(input, JSON.stringify(diagram([
+    { id: 'bedrock', type: 'external', label: 'Amazon Bedrock', brand: 'bedrock', pos: [40, 40], size: [210, 76] },
+    { id: 'chroma', type: 'database', label: 'Chroma', brand: 'chroma', pos: [340, 40], size: [210, 76] },
+  ])));
+  const result = run(['render', 'architecture', input, output, '--quality', 'showcase']);
+  assert.equal(result.status, 0, result.stderr);
+  const html = fs.readFileSync(output, 'utf8');
+  assert.equal((html.match(/data-brand-pack="ai"/g) || []).length, 2);
+  assert.match(html, /data-brand-mark="ai-chroma"/);
+});
+
+test('the layered AI platform example groups providers and stores in labelled frames, one logo per box', () => {
+  const output = path.join(tmp, 'ai-agent-platform.html');
+  const result = run(['render', 'architecture', path.join(skillRoot, 'examples', 'ai-agent-platform.architecture.json'), output, '--quality', 'showcase']);
+  assert.equal(result.status, 0, result.stderr);
+  const html = fs.readFileSync(output, 'utf8');
+  for (const layer of ['Channels', 'Edge and identity', 'Agent runtime', 'LLM providers', 'Vector stores']) {
+    assert.ok(html.includes(`>${layer}<`), `${layer} frame is labelled`);
+  }
+  for (const id of ['openai', 'azure-ai-foundry', 'anthropic', 'ai-bedrock', 'ai-vertex-ai', 'ollama', 'qdrant', 'ai-pinecone', 'ai-weaviate', 'ai-chroma']) {
+    assert.match(html, new RegExp(`data-brand-mark="${id}"`), `${id} has its own logo`);
+    assert.doesNotMatch(html.match(new RegExp(`data-brand-mark="${id}"[^>]*>`))?.[0] || '', /brand-fallback/);
+  }
+  for (const id of ['openai', 'anthropic', 'ollama', 'qdrant']) {
+    const size = html.match(new RegExp(`data-brand-mark="${id}"[^>]+>\\s*<rect width="([\\d.]+)"`))?.[1];
+    assert.equal(size, '48', `${id} uses the 48px gutter, like the pack logos`);
+  }
 });

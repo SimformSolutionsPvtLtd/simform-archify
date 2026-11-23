@@ -20,6 +20,18 @@ under the ISC License, Copyright (c) 2026 Lucide Icons and Contributors; a few
 glyphs derive from the Feather project (MIT). The full licence text ships as
 `archify/icon-packs/generic/TERMS-LICENSE`.
 
+## AI and data-stack logos
+
+The `ai` icon pack in `archify/icon-packs/ai/` holds logos of LLM providers, vector
+stores and agent frameworks. Each file's source is recorded in
+`archify/icon-packs/SOURCES.md` and `catalog.json`: most come from
+[lobe-icons](https://github.com/lobehub/lobe-icons) (`@lobehub/icons-static-svg`
+1.106.0, MIT License, Copyright (c) LobeHub), some from
+[gilbarbara/logos](https://github.com/gilbarbara/logos) (CC0 1.0, pinned commit) and
+one from [Simple Icons](https://simpleicons.org) 16.28.0 (CC0 1.0). The licence texts
+ship as `archify/icon-packs/ai/TERMS-LICENSE-*.txt`. The logos remain trademarks of their
+owners; they name a product and imply no endorsement.
+
 ## LlamaIndex and Agno marks
 
 The built-in `llamaindex` mark is the single-colour glyph from
